@@ -82,6 +82,16 @@ RSpec.describe "Sessions", type: :request do
       expect(user.sessions).to be_empty
     end
 
+    it "answers an Inertia request with a location visit rather than a redirect" do
+      sign_in_as(user)
+
+      delete session_url, headers: { "X-Inertia" => "true" }
+
+      expect(response).to have_http_status(:conflict)
+      expect(response.headers["X-Inertia-Location"]).to eq(new_session_path)
+      expect(user.sessions).to be_empty
+    end
+
     it "requires authentication" do
       delete session_url
 

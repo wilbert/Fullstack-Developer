@@ -2,3 +2,9 @@
 
 @plugin '@tailwindcss/typography';
 @plugin '@tailwindcss/forms';
+
+@utility input {
+  @apply w-full rounded-md border border-slate-300 px-3 py-2 text-sm
+         focus:border-slate-500 focus:ring-1 focus:ring-slate-500
+         disabled:cursor-not-allowed disabled:bg-slate-50;
+}
