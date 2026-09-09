@@ -6,7 +6,8 @@ require "simplecov"
 SimpleCov.start "rails" do
   enable_coverage :branch
   minimum_coverage line: 90, branch: 80
-  add_filter %w[/spec/ /config/ /db/ /app/channels/application_cable/]
+  # `add_filter` is deprecated as of SimpleCov 1.2; `skip` takes the same arguments.
+  skip %w[/spec/ /config/ /db/ /app/channels/application_cable/]
   # Give each parallel_tests worker its own result set so they merge instead of clobbering.
   command_name "rspec_#{ENV['TEST_ENV_NUMBER']}" if ENV["TEST_ENV_NUMBER"]
 end
@@ -36,7 +37,7 @@ require 'shoulda/matchers'
 # directory. Alternatively, in the individual `*_spec.rb` files, manually
 # require only the support files necessary.
 #
-# Rails.root.glob('spec/support/**/*.rb').sort_by(&:to_s).each { |f| require f }
+Rails.root.glob('spec/support/**/*.rb').sort_by(&:to_s).each { |f| require f }
 
 # Ensures that the test database schema matches the current schema file.
 # If there are pending migrations it will invoke `db:test:prepare` to
