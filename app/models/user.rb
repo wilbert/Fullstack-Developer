@@ -28,12 +28,23 @@ class User < ApplicationRecord
   before_destroy :ensure_not_last_admin, prepend: true
   validate :admin_headcount_preserved, on: :update
 
+  after_commit :refresh_dashboard_stats, on: %i[ create destroy ]
+  after_commit :refresh_dashboard_stats_on_role_change, on: :update
+
   def avatar_source
     return avatar_image if avatar_image.attached?
     avatar_url.presence
   end
 
   private
+
+  def refresh_dashboard_stats
+    Dashboard::Broadcaster.call
+  end
+
+  def refresh_dashboard_stats_on_role_change
+    refresh_dashboard_stats if saved_change_to_role?
+  end
 
   def ensure_not_last_admin
     return unless admin? && User.admin.count <= 1

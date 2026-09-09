@@ -35,17 +35,13 @@ RSpec.describe Dashboard::Stats do
     end
   end
 
-  # The test environment runs on :null_store, which never retains anything --
-  # `fetch` would yield on every call and the caching would look broken. These
-  # examples swap in a real store so the caching itself is what is under test.
-  describe "caching" do
-    around do |example|
-      original = Rails.cache
-      Rails.cache = ActiveSupport::Cache::MemoryStore.new
-      example.run
-    ensure
-      Rails.cache = original
-    end
+  # `:cache` swaps :null_store for a real store; see spec/support/cache_helpers.rb.
+  describe "caching", :cache do
+    # User's after_commit hook expires this cache on every create, which would
+    # mask what these examples are checking: creating a user is the only way to
+    # move the counts, so the invalidation has to be held back to see the cache
+    # do its job. Broadcaster's own spec covers the hook firing for real.
+    before { allow(Dashboard::Broadcaster).to receive(:call) }
 
     it "serves a cached copy rather than recounting" do
       create(:user)
