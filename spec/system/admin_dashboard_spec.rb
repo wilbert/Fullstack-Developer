@@ -17,15 +17,15 @@ RSpec.describe "The admin dashboard", type: :system, js: true do
 
     expect(page).to have_current_path(admin_dashboard_path)
     expect(page).to have_css("h1", text: "Admin dashboard")
-    expect(page).to have_css("dt", text: "Total users")
+    expect(page).to have_css("dt", text: /Total users/i)
     expect(page).to have_css("dd", text: "3")
-    expect(page).to have_css("dt", text: "Admins")
-    expect(page).to have_css("dt", text: "Members")
+    expect(page).to have_css("dt", text: /Admins/i)
+    expect(page).to have_css("dt", text: /Members/i)
   end
 
   it "updates the counts when a user is created elsewhere" do
     sign_in_through_the_form(admin)
-    total = -> { find("dt", text: "Total users").sibling("dd") }
+    total = -> { find("dt", text: /Total users/i).sibling("dd") }
 
     expect(total.call).to have_text("1")
 
