@@ -39,6 +39,12 @@ gem "kamal", require: false
 # Add HTTP asset caching/compression and X-Sendfile acceleration to Puma [https://github.com/basecamp/thruster/]
 gem "thruster", require: false
 
+# Spreadsheet parsing (xlsx) [https://github.com/roo-rb/roo]
+gem "roo", "~> 2.10"
+# roo requires csv at runtime but does not declare it; no longer a default gem on Ruby 4.0
+gem "csv"
+
+
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 1.2"
 
@@ -54,14 +60,18 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
-  
+
+  gem "rspec-rails", "~> 8.0"
+  gem "factory_bot_rails"
+  gem "faker"
+  gem "dotenv-rails"
 end
 
-group :test do
-  gem "rspec-rails"
-  gem "factory_bot_rails"
-  gem "capybara"
+group :test do  gem "capybara"
+  gem "capybara-playwright-driver"
   gem "selenium-webdriver"
+  gem "shoulda-matchers", "~> 6.0"
+  gem "simplecov", require: false
 end
 
 group :development do
