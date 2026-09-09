@@ -23,6 +23,17 @@ RSpec.describe "The admin dashboard", type: :system, js: true do
     expect(page).to have_css("dt", text: "Members")
   end
 
+  it "updates the counts when a user is created elsewhere" do
+    sign_in_through_the_form(admin)
+    total = -> { find("dt", text: "Total users").sibling("dd") }
+
+    expect(total.call).to have_text("1")
+
+    create(:user)
+
+    expect(total.call).to have_text("2", wait: 5)
+  end
+
   it "links through to the users table" do
     sign_in_through_the_form(admin)
 

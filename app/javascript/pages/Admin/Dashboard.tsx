@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react'
 import AppLayout from '@/layouts/AppLayout'
+import { useDashboardStream } from '@/hooks/useDashboardStream'
 import type { DashboardStats, UserRole } from '@/types'
 
 /** Props from Admin::DashboardsController#show. */
@@ -19,6 +20,8 @@ function Tile({ label, value }: { label: string; value: number }) {
 }
 
 export default function Dashboard({ stats }: Props) {
+  useDashboardStream()
+
   return (
     <>
       <Head title="Admin dashboard" />
