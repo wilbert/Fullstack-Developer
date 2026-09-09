@@ -1,6 +1,11 @@
 # app/jobs/dashboard/broadcast_job.rb
 module Dashboard
   class BroadcastJob < ApplicationJob
-    def perform = Broadcaster.broadcast
+    queue_as :default
+
+    def perform
+      Dashboard::Stats.expire
+      Dashboard::Broadcaster.broadcast
+    end
   end
 end
