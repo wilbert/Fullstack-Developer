@@ -1,4 +1,16 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
+
+# SimpleCov must start before any application code is loaded (i.e. before
+# config/environment below), otherwise files autoloaded at boot report 0% hit.
+require "simplecov"
+SimpleCov.start "rails" do
+  enable_coverage :branch
+  minimum_coverage line: 90, branch: 80
+  add_filter %w[/spec/ /config/ /db/ /app/channels/application_cable/]
+  # Give each parallel_tests worker its own result set so they merge instead of clobbering.
+  command_name "rspec_#{ENV['TEST_ENV_NUMBER']}" if ENV["TEST_ENV_NUMBER"]
+end
+
 require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'
@@ -9,6 +21,7 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 # return unless Rails.env.test?
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
+require 'shoulda/matchers'
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -40,6 +53,9 @@ RSpec.configure do |config|
     Rails.root.join('spec/fixtures')
   ]
 
+  # Use `create(...)` / `build(...)` directly instead of `FactoryBot.create(...)`.
+  config.include FactoryBot::Syntax::Methods
+
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
@@ -69,4 +85,11 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+end
+
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :rspec
+    with.library :rails
+  end
 end
