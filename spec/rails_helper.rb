@@ -60,6 +60,10 @@ RSpec.configure do |config|
   # Use `create(...)` / `build(...)` directly instead of `FactoryBot.create(...)`.
   config.include FactoryBot::Syntax::Methods
 
+  # `travel`, `travel_to` and `freeze_time`, for specs that turn on cache expiry
+  # or timestamps. Each example's clock is unstubbed again on the way out.
+  config.include ActiveSupport::Testing::TimeHelpers
+
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
