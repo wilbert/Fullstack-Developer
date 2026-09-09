@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Dashboard::StatsChannel, type: :channel do
+RSpec.describe DashboardChannel, type: :channel do
   it "subscribes an admin to the dashboard stream" do
     stub_connection current_user: create(:user, :admin)
 
@@ -12,6 +12,14 @@ RSpec.describe Dashboard::StatsChannel, type: :channel do
 
   it "turns a member away rather than leaking the counts" do
     stub_connection current_user: create(:user)
+
+    subscribe
+
+    expect(subscription).to be_rejected
+  end
+
+  it "turns away a connection with no identified user" do
+    stub_connection current_user: nil
 
     subscribe
 
