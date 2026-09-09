@@ -46,7 +46,7 @@ gem "kamal", require: false
 gem "thruster", require: false
 
 # Spreadsheet parsing (xlsx) [https://github.com/roo-rb/roo]
-gem "roo", "~> 2.10"
+gem "roo", "~> 3.0"
 # roo requires csv at runtime but does not declare it; no longer a default gem on Ruby 4.0
 gem "csv"
 

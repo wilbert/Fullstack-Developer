@@ -335,4 +335,39 @@ RSpec.describe User, type: :model do
       expect(build(:user).save).to be(true)
     end
   end
+
+  # The dashboard's counts come straight from these records, so anything that
+  # moves them has to reach Dashboard::Broadcaster.
+  describe "notifying the dashboard" do
+    let(:stream) { Dashboard::Broadcaster::STREAM }
+
+    it "broadcasts when a user is created" do
+      expect { create(:user) }.to have_broadcasted_to(stream).with(type: "stats.changed")
+    end
+
+    it "broadcasts when a user is destroyed" do
+      user = create(:user)
+
+      expect { user.destroy }.to have_broadcasted_to(stream)
+    end
+
+    it "broadcasts when a role changes" do
+      create(:user, :admin)
+      member = create(:user)
+
+      expect { member.update!(role: :admin) }.to have_broadcasted_to(stream)
+    end
+
+    it "stays quiet for an update that leaves the counts alone" do
+      user = create(:user)
+
+      expect { user.update!(full_name: "Ada Byron") }.not_to have_broadcasted_to(stream)
+    end
+
+    it "stays quiet when a save is rolled back" do
+      user = build(:user, full_name: "")
+
+      expect { user.save }.not_to have_broadcasted_to(stream)
+    end
+  end
 end

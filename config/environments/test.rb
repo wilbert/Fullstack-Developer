@@ -50,4 +50,16 @@ Rails.application.configure do
 
   # Raise error when a before_action's only/except options reference missing actions.
   config.action_controller.raise_on_missing_callback_actions = true
+
+  # `User#email_address` is encrypted, so the test environment needs encryption keys
+  # before any user can be built. Reading them from credentials would make the suite
+  # depend on config/master.key, which is gitignored -- CI and a fresh clone have no
+  # way to supply it. These keys guard nothing: the data they encrypt is generated
+  # and dropped by the suite itself. Never reuse them outside the test environment.
+  config.active_record.encryption.primary_key =
+    ENV.fetch("AR_ENCRYPTION_PRIMARY_KEY", "test_primary_key_not_for_real_data_00")
+  config.active_record.encryption.deterministic_key =
+    ENV.fetch("AR_ENCRYPTION_DETERMINISTIC_KEY", "test_deterministic_key_not_for_real_0")
+  config.active_record.encryption.key_derivation_salt =
+    ENV.fetch("AR_ENCRYPTION_SALT", "test_key_derivation_salt_not_for_real")
 end

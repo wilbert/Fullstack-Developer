@@ -1,9 +1,11 @@
-class Admin::DashboardsController < ApplicationController
-  include Authorization
+module Admin
+  class DashboardsController < ApplicationController
+    def show
+      authorize! User, "index?"
 
-  before_action -> { authorize!(User, "index?") }
-
-  def show
-    @users = UserPolicy.new(Current.user, User).scope
+      render inertia: "Admin/Dashboard", props: {
+        stats: -> { Dashboard::Stats.current }
+      }
+    end
   end
 end

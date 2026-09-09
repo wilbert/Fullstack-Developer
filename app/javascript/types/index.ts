@@ -38,3 +38,10 @@ export type Filters = {
 
 /** The subset of Filters that UserSearch actually reads back off the query string. */
 export type SearchParams = Pick<Filters, 'query' | 'sort' | 'direction' | 'role' | 'page'>
+
+/** Mirrors Dashboard::Stats#to_h. */
+export type DashboardStats = {
+  total: number
+  by_role: Record<UserRole, number>
+  generated_at: string
+}

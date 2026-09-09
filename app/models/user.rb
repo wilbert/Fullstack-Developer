@@ -28,12 +28,21 @@ class User < ApplicationRecord
   before_destroy :ensure_not_last_admin, prepend: true
   validate :admin_headcount_preserved, on: :update
 
+  after_commit :broadcast_dashboard_stats, on: %i[create destroy]
+  # Block form on purpose: `after_commit` dedupes by filter, so the same symbol
+  # registered twice would drop the declaration above.
+  after_commit(on: :update, if: :saved_change_to_role?) { broadcast_dashboard_stats }
+
   def avatar_source
     return avatar_image if avatar_image.attached?
     avatar_url.presence
   end
 
   private
+
+  def broadcast_dashboard_stats
+    Dashboard::Broadcaster.call
+  end
 
   def ensure_not_last_admin
     return unless admin? && User.admin.count <= 1
