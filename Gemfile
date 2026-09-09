@@ -20,6 +20,9 @@ gem "tailwindcss-rails"
 
 gem "inertia_rails"
 
+# Pagination [https://github.com/ddnexus/pagy]
+gem "pagy", "~> 9.0"
+
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 gem "bcrypt", "~> 3.1.7"
 
@@ -70,7 +73,8 @@ group :development, :test do
   gem "dotenv-rails"
 end
 
-group :test do  gem "capybara"
+group :test do
+  gem "capybara"
   gem "capybara-playwright-driver"
   gem "selenium-webdriver"
   gem "shoulda-matchers", "~> 6.0"

@@ -23,6 +23,9 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 require 'shoulda/matchers'
+# Inertia's RSpec matchers (`render_component`, `have_props`, ...) ship inside
+# inertia_rails itself; requiring this self-configures RSpec.
+require 'inertia_rails/rspec'
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
