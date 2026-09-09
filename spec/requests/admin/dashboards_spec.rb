@@ -1,6 +1,8 @@
 require "rails_helper"
 
 RSpec.describe "Admin::Dashboards", type: :request do
+  def props = inertia.props.deep_symbolize_keys
+
   let!(:admin)  { create(:user, :admin, email_address: "boss@example.com", password: "password") }
   let!(:member) { create(:user, full_name: "Regular Member", email_address: "member@example.com", password: "password") }
 
@@ -18,13 +20,20 @@ RSpec.describe "Admin::Dashboards", type: :request do
     expect(response).to have_http_status(:ok)
   end
 
-  it "lists every user for an admin" do
+  it "renders the dashboard component for an admin" do
     sign_in_as(admin)
 
     get admin_dashboard_path
 
-    expect(response.body).to include("Regular Member")
-    expect(response.body).to include("2 users")
+    expect(inertia).to render_component("Admin/Dashboard")
+  end
+
+  it "hands the component the current stats" do
+    sign_in_as(admin)
+
+    get admin_dashboard_path
+
+    expect(props[:stats]).to include(total: 2, by_role: { member: 1, admin: 1 })
   end
 
   it "turns a member away with the authorization alert" do
