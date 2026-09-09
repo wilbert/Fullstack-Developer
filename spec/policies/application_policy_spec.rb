@@ -23,6 +23,15 @@ RSpec.describe ApplicationPolicy do
       expect(policy.create?).to be(false)
       expect(policy.update?).to be(false)
       expect(policy.destroy?).to be(false)
+      expect(policy.new?).to be(false)
+      expect(policy.edit?).to be(false)
+    end
+
+    it "ties the form predicates to the write they lead to" do
+      allow(policy).to receive_messages(create?: true, update?: true)
+
+      expect(policy.new?).to be(true)
+      expect(policy.edit?).to be(true)
     end
 
     it "permits no attributes" do

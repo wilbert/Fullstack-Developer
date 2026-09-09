@@ -13,6 +13,8 @@ RSpec.describe UserPolicy do
     it { expect(policy.index?).to be(true) }
     it { expect(policy.show?).to be(true) }
     it { expect(policy.create?).to be(true) }
+    it { expect(policy.new?).to be(true) }
+    it { expect(policy.edit?).to be(true) }
     it { expect(policy.update?).to be(true) }
     it { expect(policy.destroy?).to be(true) }
     it { expect(policy.toggle_role?).to be(true) }
@@ -44,12 +46,14 @@ RSpec.describe UserPolicy do
 
     it { expect(policy.index?).to be(false) }
     it { expect(policy.create?).to be(false) }
+    it { expect(policy.new?).to be(false) }
     it { expect(policy.toggle_role?).to be(false) }
 
     it "can view, edit and delete their own account" do
       expect(policy.show?).to be(true)
       expect(policy.update?).to be(true)
       expect(policy.destroy?).to be(true)
+      expect(policy.edit?).to be(true)
     end
   end
 
@@ -62,6 +66,8 @@ RSpec.describe UserPolicy do
       expect(policy.create?).to be(false)
       expect(policy.update?).to be(false)
       expect(policy.destroy?).to be(false)
+      expect(policy.new?).to be(false)
+      expect(policy.edit?).to be(false)
       expect(policy.toggle_role?).to be(false)
     end
   end
