@@ -9,11 +9,10 @@ class UserPolicy < ApplicationPolicy
   def update?  = user.admin? || owner?
   def destroy? = user.admin? || owner?
 
-  # An admin must not be able to demote or delete themselves out of access.
   def toggle_role? = user.admin? && !owner?
 
   def permitted_attributes
-    user.admin? ? ADMIN_ATTRIBUTES : BASE_ATTRIBUTES
+    toggle_role? ? ADMIN_ATTRIBUTES : BASE_ATTRIBUTES
   end
 
   def scope

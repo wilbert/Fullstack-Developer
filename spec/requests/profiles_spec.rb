@@ -147,30 +147,29 @@ RSpec.describe "Profiles", type: :request do
       expect(user.reload).to be_member
     end
 
-    # NOTE: `permitted_attributes` keys off whether the *actor* is an admin, and
-    # the actor here is always the record's owner. So an admin editing their own
-    # profile may assign `:role` -- self-demotion, which `toggle_role?` exists to
-    # prevent, goes through as long as a second admin satisfies the model's
-    # headcount validation. Pinned as it actually is; see the summary.
-    it "currently lets an admin demote themselves through their own profile" do
+    # The actor here is always the record's owner, so `toggle_role?` is false and
+    # `permitted_attributes` withholds `:role`. An admin cannot demote themselves
+    # through the member-facing profile route either, even with a second admin
+    # present to satisfy the model's headcount validation.
+    it "ignores a role an admin tries to give themselves" do
       admin = create(:user, :admin, email_address: "boss@example.com", password: "password")
       create(:user, :admin, email_address: "second@example.com")
       sign_in_as(admin)
 
-      patch profile_path, params: { user: { role: "member" } }
+      patch profile_path, params: { user: { full_name: "Ada King", role: "member" } }
 
-      expect(admin.reload).to be_member
+      expect(admin.reload).to be_admin
+      expect(admin.full_name).to eq("Ada King")
     end
 
-    it "still refuses to demote the last admin, which the model guards" do
+    it "rejects a request whose only field is one the policy withholds" do
       admin = create(:user, :admin, email_address: "boss@example.com", password: "password")
       sign_in_as(admin)
 
       patch profile_path, params: { user: { role: "member" } }
 
+      expect(response).to have_http_status(:bad_request)
       expect(admin.reload).to be_admin
-      expect(session[:inertia_errors][:role])
-        .to eq([ "cannot change: at least one administrator is required" ])
     end
   end
 

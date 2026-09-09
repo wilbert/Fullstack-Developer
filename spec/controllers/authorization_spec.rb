@@ -152,13 +152,22 @@ RSpec.describe Authorization, type: :controller do
       expect(response.body).to eq("full_name")
     end
 
-    it "keeps role for an admin" do
+    it "keeps role for an admin acting on someone else" do
       admin = create(:user, :admin)
       allow(Current).to receive(:user).and_return(admin)
 
-      patch :update, params: { id: admin.id, user: { full_name: "Ada", role: "admin" } }
+      patch :update, params: { id: current_user.id, user: { full_name: "Ada", role: "admin" } }
 
       expect(response.body).to eq("full_name,role")
+    end
+
+    it "drops role for an admin acting on themselves, so they cannot self-demote" do
+      admin = create(:user, :admin)
+      allow(Current).to receive(:user).and_return(admin)
+
+      patch :update, params: { id: admin.id, user: { full_name: "Ada", role: "member" } }
+
+      expect(response.body).to eq("full_name")
     end
 
     it "raises when the expected key is missing entirely" do

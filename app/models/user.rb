@@ -11,13 +11,12 @@ class User < ApplicationRecord
   normalizes :full_name,     with: ->(value) { value.to_s.squish }
 
   validates :full_name, presence: true, length: { in: 2..120 }
-  # `case_sensitive: false` would wrap the column in SQL LOWER(), which here applies
-  # to the *ciphertext* -- bypassing the unique index and comparing base64 case-blind.
-  # `normalizes` already downcases, so an exact match is both correct and index-backed.
   validates :email_address,
             presence: true,
             uniqueness: true,
             format: { with: URI::MailTo::EMAIL_REGEXP }
+
+  validates :password, length: { minimum: 8 }, allow_nil: true
   validates :avatar_url,
             format: { with: %r{\Ahttps://\S+\z} },
             allow_blank: true

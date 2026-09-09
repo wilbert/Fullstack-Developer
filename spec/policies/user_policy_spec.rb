@@ -78,6 +78,18 @@ RSpec.describe UserPolicy do
       expect(policy_for(admin, member).permitted_attributes).to include(:role)
     end
 
+    it "withholds role from an admin editing themselves, matching toggle_role?" do
+      attributes = policy_for(admin, admin).permitted_attributes
+
+      expect(attributes).to eq(described_class::BASE_ATTRIBUTES)
+      expect(attributes).not_to include(:role)
+      expect(policy_for(admin, admin).toggle_role?).to be(false)
+    end
+
+    it "grants role to an admin creating a user, who cannot be its owner" do
+      expect(policy_for(admin, User.new).permitted_attributes).to include(:role)
+    end
+
     it "withholds role from a member editing themselves" do
       attributes = policy_for(member, member).permitted_attributes
 

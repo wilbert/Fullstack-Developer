@@ -253,30 +253,29 @@ RSpec.describe "Admin::Users", type: :request do
       expect(member.reload).to be_admin
     end
 
-    it "refuses to demote the last admin, which the model guards" do
+    it "rejects a request whose only field is one the policy withholds" do
       sign_in_as(admin)
 
       patch admin_user_path(admin), params: { user: { role: "member" } }
 
+      expect(response).to have_http_status(:bad_request)
       expect(admin.reload).to be_admin
-      expect(session[:inertia_errors][:role])
-        .to eq([ "cannot change: at least one administrator is required" ])
     end
 
-    # NOTE: `toggle_role?` exists so an admin cannot demote themselves out of
-    # access, but `update` never consults it -- it authorizes with `update?` and
-    # then permits `:role` because the actor is an admin. So self-demotion goes
-    # through whenever a second admin exists to satisfy the model's headcount
-    # validation. This pins the behaviour as it actually is; see the summary.
-    it "currently lets an admin demote themselves, bypassing toggle_role?" do
+    # `permitted_attributes` is keyed to `toggle_role?`, so an admin editing
+    # their own row never gets `:role` -- the self-demotion guard holds here as
+    # well as on the dedicated toggle route, even with a second admin present to
+    # satisfy the model's headcount validation.
+    it "ignores a role an admin tries to give themselves" do
       create(:user, :admin, email_address: "second-admin@example.com")
       sign_in_as(admin)
 
       expect(UserPolicy.new(admin, admin).toggle_role?).to be(false)
 
-      patch admin_user_path(admin), params: { user: { role: "member" } }
+      patch admin_user_path(admin), params: { user: { full_name: "Ada L.", role: "member" } }
 
-      expect(admin.reload).to be_member
+      expect(admin.reload).to be_admin
+      expect(admin.full_name).to eq("Ada L.")
     end
 
     it "ignores a role a member tries to give themselves" do

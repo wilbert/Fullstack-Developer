@@ -161,6 +161,23 @@ RSpec.describe User, type: :model do
       ).to be_nil
     end
 
+    it "requires at least eight characters" do
+      record = build(:user, password: "short", password_confirmation: "short")
+
+      expect(record).not_to be_valid
+      expect(record.errors[:password]).to include("is too short (minimum is 8 characters)")
+    end
+
+    it "accepts exactly eight characters" do
+      expect(build(:user, password: "12345678", password_confirmation: "12345678")).to be_valid
+    end
+
+    it "does not re-validate the password on an update that leaves it alone" do
+      record = create(:user, password: "secret123")
+
+      expect(record.update(full_name: "Ada King")).to be(true)
+    end
+
     it "stores a digest rather than the password" do
       record = create(:user, password: "secret123")
 

@@ -111,16 +111,35 @@ RSpec.describe "Registrations", type: :request do
       expect(session[:inertia_errors][:password]).to include("can't be blank")
     end
 
-    # NOTE: `has_secure_password` only caps length at 72 bytes -- it has no
-    # minimum -- and the model adds no password length validation of its own, so
-    # a one-character password registers. Pinned as it actually is; see the
-    # summary. If a minimum is added, this example should flip to a rejection.
-    it "currently accepts a one-character password" do
+    it "rejects a password below the minimum length" do
+      expect {
+        post registration_path, params: valid_params.deep_merge(
+          user: { password: "short", password_confirmation: "short" }
+        )
+      }.not_to change(User, :count)
+
+      expect(session[:inertia_errors][:password])
+        .to include("is too short (minimum is 8 characters)")
+    end
+
+    it "accepts a password exactly at the minimum length" do
       post registration_path, params: valid_params.deep_merge(
-        user: { password: "a", password_confirmation: "a" }
+        user: { password: "12345678", password_confirmation: "12345678" }
       )
 
       expect(User.find_by(email_address: "ada@example.com")).to be_present
+    end
+
+    # The test environment runs a :null_store, whose `increment` always returns
+    # nil, so the throttle can never trip on its own here. Stubbing the count
+    # exercises the wiring: the configured limit and the `with:` handler.
+    it "turns away a flood of signups with the throttle message" do
+      allow(ActionController::Base.cache_store).to receive(:increment).and_return(11)
+
+      expect { post registration_path, params: valid_params }.not_to change(User, :count)
+
+      expect(response).to redirect_to(new_registration_path)
+      expect(flash[:alert]).to eq("Try again later.")
     end
 
     it "rejects a request with no user params at all" do
