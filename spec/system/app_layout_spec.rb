@@ -1,18 +1,8 @@
 require "rails_helper"
 
-# The layout only renders inside an Inertia page, so these run through the real
-# browser. `home/index` is the one Inertia page that currently has a component
-# to resolve, so it stands in for every screen that will inherit the layout.
 RSpec.describe "The application layout", type: :system, js: true do
   let(:member) { create(:user, full_name: "Grace Hopper", email_address: "grace@example.com") }
   let(:admin)  { create(:user, :admin, full_name: "Ada Lovelace", email_address: "ada@example.com") }
-
-  # Polls a server-side condition the DOM gives no signal for.
-  def wait_until(timeout: 5)
-    deadline = Time.current + timeout
-    sleep(0.05) until yield || Time.current > deadline
-    yield
-  end
 
   def sign_in_through_the_form(user)
     visit new_session_path
@@ -42,34 +32,24 @@ RSpec.describe "The application layout", type: :system, js: true do
     expect(page).to have_link("Ada Lovelace", href: "/profile")
   end
 
-  # NOTE: `sessions#destroy` redirects to /session/new, which is an ERB page and
-  # carries no X-Inertia header. The nav's Link issues an Inertia XHR, and
-  # Inertia cannot swap in a non-Inertia response, so the request lands -- the
-  # session really is destroyed -- but the page never changes. To the user the
-  # button appears to do nothing, and the nav keeps showing them as signed in
-  # until they navigate. Pinned as it actually is; see the summary.
   it "destroys the session when Sign out is clicked" do
     sign_in_through_the_form(member)
     visit root_path
 
     click_on "Sign out"
 
-    expect(wait_until { member.sessions.reload.none? }).to be(true)
+    expect(page).to have_current_path(new_session_path)
+    expect(member.sessions.reload).to be_empty
   end
 
-  it "leaves the nav showing the signed-in state until the next navigation" do
+  it "leaves the nav showing no signed-in user after signing out" do
     sign_in_through_the_form(member)
     visit root_path
 
     click_on "Sign out"
-    wait_until { member.sessions.reload.none? }
-
-    expect(page).to have_current_path(root_path)
-    expect(page).to have_link("Grace Hopper")
-
-    visit root_path # only now does the browser learn it is signed out
 
     expect(page).to have_current_path(new_session_path)
+    expect(page).to have_no_link("Grace Hopper")
   end
 
   it "renders a flash alert in the banner" do
