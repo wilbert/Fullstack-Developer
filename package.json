@@ -5,6 +5,7 @@
     "@inertiajs/core": "^3.7.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
+    "playwright": "1.62.1",
     "typescript": "^7.0.2",
     "vite": "^8.2.2",
     "vite-plugin-ruby": "^5.2.3"
