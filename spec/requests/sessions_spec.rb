@@ -14,17 +14,26 @@ RSpec.describe "Sessions", type: :request do
   end
 
   describe "POST /session" do
-    it "signs the user in and redirects to the post-login destination" do
+    it "signs a member in and lands them on their profile" do
       post session_url, params: { email_address: "ada@example.com", password: password }
 
-      expect(response).to redirect_to(root_url)
+      expect(response).to redirect_to(profile_path)
       expect(user.sessions.count).to eq(1)
+    end
+
+    it "lands an admin on the admin dashboard instead" do
+      admin = create(:user, :admin, email_address: "boss@example.com", password: password)
+
+      post session_url, params: { email_address: "boss@example.com", password: password }
+
+      expect(response).to redirect_to(admin_dashboard_path)
+      expect(admin.sessions.count).to eq(1)
     end
 
     it "accepts an address that needs normalizing" do
       post session_url, params: { email_address: "  ADA@Example.COM ", password: password }
 
-      expect(response).to redirect_to(root_url)
+      expect(response).to redirect_to(profile_path)
       expect(user.sessions.count).to eq(1)
     end
 
@@ -42,7 +51,7 @@ RSpec.describe "Sessions", type: :request do
       post session_url, params: { email_address: "ada@example.com", password: "wrong" }
 
       expect(response).to redirect_to(new_session_url)
-      expect(flash[:alert]).to match(/Try another email address or password/)
+      expect(flash[:alert]).to match(/Invalid email or password/)
       expect(user.sessions).to be_empty
     end
 
@@ -50,10 +59,10 @@ RSpec.describe "Sessions", type: :request do
       post session_url, params: { email_address: "nobody@example.com", password: password }
 
       expect(response).to redirect_to(new_session_url)
-      expect(flash[:alert]).to match(/Try another email address or password/)
+      expect(flash[:alert]).to match(/Invalid email or password/)
     end
 
-    it "returns the user to the page they originally requested" do
+    it "returns the user to the page they originally requested, ahead of the default landing page" do
       get root_url # bounced to sign-in, stashing the destination
       post session_url, params: { email_address: "ada@example.com", password: password }
 

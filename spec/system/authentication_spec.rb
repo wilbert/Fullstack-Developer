@@ -10,7 +10,7 @@ RSpec.describe "Signing in", type: :system do
     fill_in "password", with: "wrong-password"
     click_on "Sign in"
 
-    expect(page).to have_css("#alert", text: "Try another email address or password.")
+    expect(page).to have_css("#alert", text: "Invalid email or password.")
     expect(user.sessions).to be_empty
   end
 
@@ -40,7 +40,7 @@ RSpec.describe "Signing in", type: :system do
     fill_in "password", with: "password"
     click_on "Sign in"
 
-    expect(page).to have_current_path(root_path)
+    expect(page).to have_current_path(profile_path)
     expect(user.sessions.count).to eq(1)
   end
 end

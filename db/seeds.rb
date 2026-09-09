@@ -1,9 +1,14 @@
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Example:
-#
-#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-#     MovieGenre.find_or_create_by!(name: genre_name)
-#   end
+admin = User.find_or_create_by!(email_address: "admin@umanni.test") do |user|
+  user.full_name = "Umanni Admin"
+  user.password  = ENV.fetch("SEED_ADMIN_PASSWORD", "password123")
+  user.role      = :admin
+end
+
+25.times do
+  User.find_or_create_by!(email_address: Faker::Internet.unique.email) do |user|
+    user.full_name  = Faker::Name.name
+    user.password   = "password123"
+    user.role       = :member
+    user.avatar_url = "https://i.pravatar.cc/300?u=#{SecureRandom.hex(4)}"
+  end
+end
