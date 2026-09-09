@@ -27,6 +27,7 @@ class User < ApplicationRecord
             if: -> { avatar_image.attached? }
 
   before_destroy :ensure_not_last_admin, prepend: true
+  validate :admin_headcount_preserved, on: :update
 
   def avatar_source
     return avatar_image if avatar_image.attached?
@@ -40,5 +41,16 @@ class User < ApplicationRecord
 
     errors.add(:base, "Cannot remove the last administrator")
     throw :abort
+  end
+
+  def admin_headcount_preserved
+    return unless role_previously_was_admin_and_now_member?
+    return if User.admin.where.not(id: id).exists?
+
+    errors.add(:role, "cannot change: at least one administrator is required")
+  end
+
+  def role_previously_was_admin_and_now_member?
+    role_changed? && role_was == "admin" && member?
   end
 end

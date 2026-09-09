@@ -276,5 +276,46 @@ RSpec.describe User, type: :model do
 
       expect { member.destroy }.to change(described_class, :count).by(-1)
     end
+
+    it "refuses to demote the only admin" do
+      admin = create(:user, :admin)
+
+      expect(admin.update(role: :member)).to be(false)
+      expect(admin.errors[:role])
+        .to include("cannot change: at least one administrator is required")
+      expect(admin.reload).to be_admin
+    end
+
+    it "allows demoting an admin once another admin exists" do
+      admin = create(:user, :admin)
+      create(:user, :admin)
+
+      expect(admin.update(role: :member)).to be(true)
+      expect(admin.reload).to be_member
+    end
+
+    it "does not block an unrelated update to the only admin" do
+      admin = create(:user, :admin)
+
+      expect(admin.update(full_name: "Ada Byron")).to be(true)
+    end
+
+    it "does not block promoting a member to admin" do
+      create(:user, :admin)
+      member = create(:user)
+
+      expect(member.update(role: :admin)).to be(true)
+    end
+
+    it "never blocks demoting when the record was already a member" do
+      create(:user, :admin)
+      member = create(:user)
+
+      expect(member.update(role: :member)).to be(true)
+    end
+
+    it "does not run on create, so the first user can be a member" do
+      expect(build(:user).save).to be(true)
+    end
   end
 end
