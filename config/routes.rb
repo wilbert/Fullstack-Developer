@@ -1,18 +1,25 @@
 Rails.application.routes.draw do
-  resource :session
-  resources :passwords, param: :token
+  resource  :session,      only: %i[new create destroy]
+  resources :passwords,    param: :token, only: %i[new create edit update]
+  resource  :registration, only: %i[new create]
+  resource  :profile,      only: %i[show edit update destroy]
 
-  # Post-sign-in landing pages (see Authentication#default_landing_url).
-  get "profile" => "profiles#show"
-  get "admin/dashboard" => "admin/dashboards#show", as: :admin_dashboard
+  namespace :admin do
+    # Generates `admin_dashboard_path` => /admin
+    root "dashboards#show", as: :dashboard
+
+    resources :users do
+      resource :role, only: :update, controller: "user_roles"
+    end
+  end
 
   # Redirect to localhost from 127.0.0.1 to use same IP address with Vite server
   constraints(host: "127.0.0.1") do
     get "(*path)", to: redirect { |params, req| "#{req.protocol}localhost:#{req.port}/#{params[:path]}" }
   end
-  root 'inertia_example#index'
-  get 'inertia-example', to: 'inertia_example#index'
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+
+  root "home#index"
+  get "inertia-example", to: "inertia_example#index"
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
@@ -21,7 +28,4 @@ Rails.application.routes.draw do
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
-
-  # Defines the root path route ("/")
-  # root "posts#index"
 end
