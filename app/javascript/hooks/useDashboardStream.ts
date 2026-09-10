@@ -1,9 +1,6 @@
-import { createConsumer, type Consumer } from '@rails/actioncable'
 import { router } from '@inertiajs/react'
 import { useEffect, useRef } from 'react'
-
-let consumer: Consumer | null = null
-const getConsumer = () => (consumer ??= createConsumer())
+import { getConsumer } from '@/lib/cable'
 
 export function useDashboardStream() {
   const pending = useRef<number | null>(null)

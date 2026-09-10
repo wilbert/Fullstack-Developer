@@ -13,6 +13,7 @@ export type User = {
   role: UserRole
   admin: boolean
   avatar_url: string | null
+  remote_avatar_url: string | null
   created_at: string
 }
 
@@ -44,4 +45,30 @@ export type DashboardStats = {
   total: number
   by_role: Record<UserRole, number>
   generated_at: string
+}
+
+export type ImportStatus = 'pending' | 'parsing' | 'processing' | 'completed' | 'failed' | 'cancelled'
+
+/** One entry of Import#error_report, as written by Import#record_error. */
+export type ImportRowError = {
+  row: number
+  identifier: string | null
+  errors: string[]
+}
+
+/** Mirrors ImportSerializer#as_json. */
+export type Import = {
+  id: number
+  status: ImportStatus
+  filename: string
+  progress: number
+  total_rows: number
+  processed_rows: number
+  created_count: number
+  skipped_count: number
+  failed_count: number
+  failure_reason: string | null
+  finished: boolean
+  error_report: ImportRowError[]
+  created_at: string
 }

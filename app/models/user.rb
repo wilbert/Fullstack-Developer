@@ -1,6 +1,7 @@
 class User < ApplicationRecord
   has_secure_password
   has_many :sessions, dependent: :destroy
+  has_many :imports, dependent: :destroy
   has_one_attached :avatar_image
 
   enum :role, { member: 0, admin: 1 }, default: :member, validate: true
@@ -28,10 +29,13 @@ class User < ApplicationRecord
   before_destroy :ensure_not_last_admin, prepend: true
   validate :admin_headcount_preserved, on: :update
 
-  after_commit :broadcast_dashboard_stats, on: %i[create destroy]
+  after_commit :broadcast_dashboard_stats, on: %i[create destroy],
+               unless: -> { DashboardBroadcasts.suppressed? }
   # Block form on purpose: `after_commit` dedupes by filter, so the same symbol
   # registered twice would drop the declaration above.
-  after_commit(on: :update, if: :saved_change_to_role?) { broadcast_dashboard_stats }
+  after_commit(on: :update, if: -> { saved_change_to_role? && !DashboardBroadcasts.suppressed? }) do
+    broadcast_dashboard_stats
+  end
 
   def avatar_source
     return avatar_image if avatar_image.attached?

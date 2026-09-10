@@ -17,6 +17,7 @@ class UserSerializer
       role: user.role,
       admin: user.admin?,
       avatar_url: avatar_url,
+      remote_avatar_url: user.avatar_url.presence,
       created_at: user.created_at.iso8601
     }
   end

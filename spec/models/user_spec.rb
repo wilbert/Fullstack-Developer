@@ -15,6 +15,7 @@ RSpec.describe User, type: :model do
 
   describe "associations and attachments" do
     it { is_expected.to have_many(:sessions).dependent(:destroy) }
+    it { is_expected.to have_many(:imports).dependent(:destroy) }
 
     it "destroys dependent sessions when the user is destroyed" do
       user = create(:user)
@@ -368,6 +369,31 @@ RSpec.describe User, type: :model do
       user = build(:user, full_name: "")
 
       expect { user.save }.not_to have_broadcasted_to(stream)
+    end
+
+    describe "while broadcasts are suppressed" do
+      it "stays quiet for a create" do
+        expect { DashboardBroadcasts.suppress { create(:user) } }.not_to have_broadcasted_to(stream)
+      end
+
+      it "stays quiet for a destroy" do
+        user = create(:user)
+
+        expect { DashboardBroadcasts.suppress { user.destroy } }.not_to have_broadcasted_to(stream)
+      end
+
+      it "stays quiet for a role change" do
+        create(:user, :admin)
+        member = create(:user)
+
+        expect { DashboardBroadcasts.suppress { member.update!(role: :admin) } }.not_to have_broadcasted_to(stream)
+      end
+
+      it "broadcasts again once the block is done" do
+        DashboardBroadcasts.suppress { create(:user) }
+
+        expect { create(:user) }.to have_broadcasted_to(stream)
+      end
     end
   end
 end

@@ -11,6 +11,8 @@ Rails.application.routes.draw do
     resources :users do
       resource :role, only: :update, controller: "user_roles"
     end
+
+    resources :imports, only: %i[index new create show]
   end
 
   # Redirect to localhost from 127.0.0.1 to use same IP address with Vite server

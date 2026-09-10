@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_09_120845) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_10_134246) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -42,6 +42,25 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_09_120845) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "imports", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "created_count", default: 0, null: false
+    t.jsonb "error_report", default: [], null: false
+    t.integer "failed_count", default: 0, null: false
+    t.string "failure_reason"
+    t.datetime "finished_at"
+    t.integer "processed_rows", default: 0, null: false
+    t.integer "skipped_count", default: 0, null: false
+    t.datetime "started_at"
+    t.integer "status", default: 0, null: false
+    t.integer "total_rows", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["status"], name: "index_imports_on_status"
+    t.index ["user_id", "created_at"], name: "index_imports_on_user_id_and_created_at"
+    t.index ["user_id"], name: "index_imports_on_user_id"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "ip_address"
@@ -65,5 +84,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_09_120845) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "imports", "users"
   add_foreign_key "sessions", "users"
 end

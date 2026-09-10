@@ -78,4 +78,16 @@ RSpec.describe UserSerializer do
       expect(described_class.collection(User.none)).to eq([])
     end
   end
+
+  describe "remote_avatar_url" do
+    it "is the stored remote URL even when an uploaded image is what gets displayed" do
+      user = create(:user, :with_avatar_image, avatar_url: "https://cdn.example.com/kept.png")
+
+      expect(described_class.new(user).as_json[:remote_avatar_url]).to eq("https://cdn.example.com/kept.png")
+    end
+
+    it "is nil when only an image was uploaded, so the form never posts a storage path back" do
+      expect(described_class.new(create(:user, :with_avatar_image)).as_json[:remote_avatar_url]).to be_nil
+    end
+  end
 end
