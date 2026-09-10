@@ -15,7 +15,9 @@ RSpec.describe Import, type: :model do
     it { is_expected.to belong_to(:user) }
 
     it "is destroyed along with its user" do
-      import = create(:import)
+      # A member owner on purpose: the factory's default owner is an admin, and
+      # the last admin cannot be destroyed at all.
+      import = create(:import, user: create(:user))
 
       expect { import.user.destroy }.to change(described_class, :count).by(-1)
     end
