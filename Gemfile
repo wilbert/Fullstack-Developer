@@ -73,6 +73,8 @@ group :development, :test do
   gem "factory_bot_rails"
   gem "faker"
   gem "dotenv-rails"
+  gem "rubocop-rspec", require: false
+  gem "erb_lint", require: false
 end
 
 group :test do
@@ -89,3 +91,5 @@ group :development do
 end
 
 gem "vite_rails", "~> 3.11"
+
+gem "aws-sdk-s3", "~> 1.231", require: false

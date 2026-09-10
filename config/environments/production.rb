@@ -21,17 +21,16 @@ Rails.application.configure do
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
 
-  # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :local
+  # Store uploaded files per ACTIVE_STORAGE_SERVICE (see config/storage.yml): amazon in production, local disk otherwise.
+  config.active_storage.service = ENV.fetch("ACTIVE_STORAGE_SERVICE", :amazon).to_sym
 
-  # Assume all access to the app is happening through a SSL-terminating reverse proxy.
-  # config.assume_ssl = true
-
-  # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  # config.force_ssl = true
+  # kamal-proxy terminates SSL and doesn't forward X-Forwarded-Proto, so assume SSL and force it.
+  # The local Kamal destination serves plain HTTP and sets RAILS_FORCE_SSL=false.
+  config.assume_ssl = ENV.fetch("RAILS_FORCE_SSL", "true") == "true"
+  config.force_ssl = config.assume_ssl
 
   # Skip http-to-https redirect for the default health check endpoint.
-  # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
+  config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
 
   # Log to STDOUT with the current request id as a default log tag.
   config.log_tags = [ :request_id ]
