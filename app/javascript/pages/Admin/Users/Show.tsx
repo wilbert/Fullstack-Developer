@@ -20,9 +20,9 @@ export default function Show({ user }: Props) {
       <Head title={user.full_name} />
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
+        <div className="flex min-w-0 flex-wrap items-center gap-3">
           <Avatar user={user} size="md" />
-          <h1 className="text-2xl font-semibold tracking-tight">{user.full_name}</h1>
+          <h1 className="text-2xl font-semibold tracking-tight wrap-anywhere">{user.full_name}</h1>
           <RoleBadge role={user.role} />
         </div>
         <Link href="/admin/users" className="text-sm text-slate-600 hover:underline">
@@ -33,7 +33,7 @@ export default function Show({ user }: Props) {
       <dl className="mt-6 max-w-lg divide-y divide-slate-100 rounded-lg border border-slate-200 bg-white text-sm">
         <div className="flex justify-between gap-4 px-4 py-3">
           <dt className="text-slate-500">Email</dt>
-          <dd>{user.email_address}</dd>
+          <dd className="min-w-0 text-right wrap-anywhere">{user.email_address}</dd>
         </div>
         <div className="flex justify-between gap-4 px-4 py-3">
           <dt className="text-slate-500">Role</dt>

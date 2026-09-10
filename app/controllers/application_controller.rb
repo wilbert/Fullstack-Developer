@@ -2,7 +2,10 @@ class ApplicationController < ActionController::Base
   include Authentication
   include Authorization
 
-  allow_browser versions: :modern
+  # The floor is what the built stylesheet needs: Tailwind v4 relies on @property,
+  # color-mix() and oklch(). Rails' :modern set (Safari 17.2, Chrome 120) would also
+  # turn away iPhones on iOS 16.4 to 17.1 that render the app fine.
+  allow_browser versions: { safari: 16.4, chrome: 111, firefox: 128, opera: 97, ie: false }
 
   inertia_share do
     {
