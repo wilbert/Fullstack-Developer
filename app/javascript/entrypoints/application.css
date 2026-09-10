@@ -1,5 +1,9 @@
 @import 'tailwindcss';
 
+/* Vite's root is app/javascript, so Tailwind would not see the ERB pages (sign-in,
+   password reset) on its own and their responsive classes would never be built. */
+@source '../../views';
+
 @plugin '@tailwindcss/typography';
 @plugin '@tailwindcss/forms';
 
