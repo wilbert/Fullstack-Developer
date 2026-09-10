@@ -15,6 +15,7 @@ RSpec.describe User, type: :model do
 
   describe "associations and attachments" do
     it { is_expected.to have_many(:sessions).dependent(:destroy) }
+    it { is_expected.to have_many(:imports).dependent(:destroy) }
 
     it "destroys dependent sessions when the user is destroyed" do
       user = create(:user)
