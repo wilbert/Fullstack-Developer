@@ -21,7 +21,7 @@ Rails.application.configure do
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
 
-  # Store uploaded files per ACTIVE_STORAGE_SERVICE (see config/storage.yml): amazon in production, local disk otherwise.
+  # Store uploads in the ACTIVE_STORAGE_SERVICE from config/storage.yml (amazon unless overridden).
   config.active_storage.service = ENV.fetch("ACTIVE_STORAGE_SERVICE", :amazon).to_sym
 
   # kamal-proxy terminates SSL and doesn't forward X-Forwarded-Proto, so assume SSL and force it.
