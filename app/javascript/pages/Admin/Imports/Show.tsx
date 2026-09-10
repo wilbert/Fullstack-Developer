@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { Head, router } from '@inertiajs/react'
+import { Head, Link, router } from '@inertiajs/react'
 import AppLayout from '@/layouts/AppLayout'
 import { getConsumer } from '@/lib/cable'
 import type { Import } from '@/types'
@@ -43,8 +43,20 @@ export default function Show({ import: record }: Props) {
     <>
       <Head title={`Import ${record.filename}`} />
 
-      <h1 className="text-2xl font-semibold">{record.filename}</h1>
-      <p className="mt-1 text-sm text-slate-500">Status: {record.status}</p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold">{record.filename}</h1>
+          <p className="mt-1 text-sm text-slate-500">Status: {record.status}</p>
+        </div>
+        <div className="flex items-center gap-4 text-sm">
+          <Link href="/admin/imports" className="text-slate-600 hover:underline">
+            All imports
+          </Link>
+          <Link href="/admin/users" className="text-slate-600 hover:underline">
+            Back to users
+          </Link>
+        </div>
+      </div>
 
       <div className="mt-6 max-w-xl">
         <div

@@ -77,9 +77,17 @@ export default function Index() {
         <h1 className="text-2xl font-semibold tracking-tight">
           Users <span className="text-slate-400">({filters.total})</span>
         </h1>
-        <Link href="/admin/users/new" className="rounded-md bg-slate-900 px-4 py-2 text-sm text-white hover:bg-slate-700">
-          New user
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/admin/imports/new"
+            className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
+          >
+            Import users
+          </Link>
+          <Link href="/admin/users/new" className="rounded-md bg-slate-900 px-4 py-2 text-sm text-white hover:bg-slate-700">
+            New user
+          </Link>
+        </div>
       </div>
 
       <div className="mt-4 flex flex-wrap gap-2">

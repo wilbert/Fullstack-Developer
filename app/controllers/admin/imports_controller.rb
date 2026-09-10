@@ -4,7 +4,7 @@ module Admin
 
     def index
       render inertia: "Admin/Imports/Index", props: {
-        imports: -> { ImportSerializer.collection(scope.recent.limit(25)) }
+        imports: -> { ImportSerializer.collection(scope.recent.with_attached_file.limit(25)) }
       }
     end
 
