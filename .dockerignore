@@ -6,6 +6,7 @@
 
 # Ignore bundler config.
 /.bundle
+/vendor/bundle
 
 # Ignore all environment files.
 /.env*
@@ -35,6 +36,14 @@
 /app/assets/builds/*
 !/app/assets/builds/.keep
 /public/assets
+/public/vite
+/public/vite-ssr
+
+# Ignore test suite and its artifacts.
+/spec
+/coverage
+/test-results
+/playwright-report
 
 # Ignore CI service files.
 /.github
@@ -45,7 +54,12 @@
 
 # Ignore development files
 /.devcontainer
+/.vscode
+/.idea
 
 # Ignore Docker-related files
 /.dockerignore
 /Dockerfile*
+
+# Ignore OS cruft.
+.DS_Store

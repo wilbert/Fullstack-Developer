@@ -1,45 +1,9 @@
+# .github/workflows/ci.yml
 name: CI
-
-on:
-  pull_request:
-  push:
-    branches: [ main ]
+on: [push, pull_request]
 
 jobs:
-  scan_ruby:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-
-      - name: Scan for common Rails security vulnerabilities using static analysis
-        run: bin/brakeman --no-pager
-
-      - name: Scan for known security vulnerabilities in gems used
-        run: bin/bundler-audit
-
-  scan_js:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-
-      - name: Scan for security vulnerabilities in JavaScript dependencies
-        run: bin/importmap audit
-
-  test:
+  ci:
     runs-on: ubuntu-latest
 
     services:
@@ -48,89 +12,41 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432:5432
+        ports: ["5432:5432"]
         options: >-
-          --health-cmd="pg_isready"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
+          --health-cmd pg_isready --health-interval 10s
+          --health-timeout 5s --health-retries 5
 
     env:
       RAILS_ENV: test
       DATABASE_URL: postgres://postgres:postgres@localhost:5432
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
-      # ruby-vips loads libvips through FFI at boot, so without it the whole
-      # suite dies on require rather than on the first image assertion.
-      - name: Install libvips
-        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libvips
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+      - uses: ruby/setup-ruby@v1
         with:
+          ruby-version: 4.0.4
           bundler-cache: true
 
-      - name: Set up Node
-        uses: actions/setup-node@v6
+      - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
-      - name: Install JavaScript dependencies
-        run: npm ci
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
 
-      # The system specs drive a real browser through capybara-playwright-driver.
-      # The version comes from package.json so it stays in step with the
-      # playwright-ruby-client gem, which pins the protocol it speaks.
-      - name: Install Playwright browser
-        run: npx playwright install --with-deps chromium
+      - run: bin/rails db:create db:schema:load
 
-      - name: Prepare the test database
-        run: bin/rails db:test:prepare
+      - run: bundle exec rubocop
+      - run: bundle exec brakeman --quiet --no-pager --exit-on-warn
+      - run: bundle exec bundler-audit check --update
+      - run: npm run typecheck
+      - run: bundle exec rspec
 
-      # Vite would build on demand inside the first system spec; doing it here
-      # keeps that cost out of the example and off the Capybara wait budget.
-      - name: Build frontend assets
-        run: bin/vite build
-
-      - name: Run tests
-        run: bundle exec rspec
-
-      - name: Upload coverage report
+      - uses: actions/upload-artifact@v4
         if: always()
-        uses: actions/upload-artifact@v4
         with:
           name: coverage
-          path: coverage
-          if-no-files-found: ignore
-
-  lint:
-    runs-on: ubuntu-latest
-    env:
-      RUBOCOP_CACHE_ROOT: tmp/rubocop
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-
-      - name: Prepare RuboCop cache
-        uses: actions/cache@v4
-        env:
-          DEPENDENCIES_HASH: ${{ hashFiles('.ruby-version', '**/.rubocop.yml', '**/.rubocop_todo.yml', 'Gemfile.lock') }}
-        with:
-          path: ${{ env.RUBOCOP_CACHE_ROOT }}
-          key: rubocop-${{ runner.os }}-${{ env.DEPENDENCIES_HASH }}-${{ github.ref_name == github.event.repository.default_branch && github.run_id || 'default' }}
-          restore-keys: |
-            rubocop-${{ runner.os }}-${{ env.DEPENDENCIES_HASH }}-
-
-      - name: Lint code for consistent style
-        run: bin/rubocop -f github
-
+          path: coverage/
