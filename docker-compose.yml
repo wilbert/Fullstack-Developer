@@ -6,14 +6,14 @@ services:
     environment:
       POSTGRES_USER: umanni
       POSTGRES_PASSWORD: secret
-      POSTGRES_DB: umanni_users_production
+      POSTGRES_DB: umanni_users_development
     volumes:
       - ./config/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
       - pg_data:/var/lib/postgresql/data
     networks:
       - umanni-test
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U umanni -d umanni_users_production"]
+      test: ["CMD-SHELL", "pg_isready -U umanni -d umanni_users_development"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -48,8 +48,8 @@ services:
       - AWS_BUCKET=${AWS_BUCKET}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - RAILS_ENV=development
-      - RACK_ENV=development
+      - RAILS_ENV=${RAILS_ENV}
+      - RACK_ENV=${RACK_ENV}
     depends_on:
       db:
         condition: service_healthy

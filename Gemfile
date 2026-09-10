@@ -57,7 +57,7 @@ gem "image_processing", "~> 1.2"
 gem "active_storage_validations"
 
 group :development, :test do
-
+  gem "faker"
   # Audits gems for known security defects (use config/bundler-audit.yml to ignore issues)
   gem "bundler-audit", require: false
 
@@ -69,8 +69,7 @@ group :development, :test do
 
   gem "rspec-rails", "~> 8.0"
   gem "factory_bot_rails"
-  gem "faker"
-  gem "dotenv-rails"
+  gem 'dotenv'
   gem "rubocop-rspec", require: false
   gem "erb_lint", require: false
 end
