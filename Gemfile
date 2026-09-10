@@ -56,8 +56,10 @@ gem "image_processing", "~> 1.2"
 # Adds `content_type` / `size` validators for Active Storage attachments (not in Rails core)
 gem "active_storage_validations"
 
+gem "faker"
+
 group :development, :test do
-  gem "faker"
+  
   # Audits gems for known security defects (use config/bundler-audit.yml to ignore issues)
   gem "bundler-audit", require: false
 
