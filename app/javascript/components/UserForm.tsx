@@ -17,7 +17,7 @@ export default function UserForm({ user, roles, action, method, submitLabel }: P
     email_address: user?.email_address ?? '',
     password: '',
     password_confirmation: '',
-    avatar_url: user?.avatar_url ?? '',
+    avatar_url: user?.remote_avatar_url ?? '',
     avatar_image: null as File | null,
     role: user?.role ?? ('member' as UserRole),
   })
@@ -26,8 +26,11 @@ export default function UserForm({ user, roles, action, method, submitLabel }: P
   const submit = (event: FormEvent) => {
     event.preventDefault()
 
-    // Inertia cannot send multipart over PATCH. Spoof the verb and force FormData.
-    form.transform((current) => (method === 'patch' ? { ...current, _method: 'patch' } : current))
+
+    form.transform(({ avatar_image, ...fields }) => ({
+      user: avatar_image ? { ...fields, avatar_image } : fields,
+      ...(method === 'patch' ? { _method: 'patch' } : {}),
+    }))
     form.post(action, { forceFormData: true, preserveScroll: true })
   }
 

@@ -13,6 +13,7 @@ export type User = {
   role: UserRole
   admin: boolean
   avatar_url: string | null
+  remote_avatar_url: string | null
   created_at: string
 }
 
