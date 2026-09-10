@@ -28,5 +28,9 @@
         </div>
       </div>
     <% end %>
+
+    <p class="mt-8 text-sm text-gray-500">
+      New here? <%= link_to "Create an account", new_registration_path, data: { turbo: false }, class: "text-gray-700 underline hover:no-underline" %>
+    </p>
   </div>
 </main>

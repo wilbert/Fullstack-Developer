@@ -200,15 +200,15 @@ RSpec.describe "Profiles", type: :request do
       expect(response).to redirect_to(new_session_url)
     end
 
-    it "carries the confirmation through to the sign-in page" do
+    it "carries the confirmation through to the landing page" do
       sign_in_as(user)
 
       delete profile_path
-      follow_redirect! # root, which now bounces a signed-out visitor
-      follow_redirect!
+      follow_redirect! # root, which shows the now signed-out visitor the landing page
 
       expect(response).to have_http_status(:ok)
-      expect(flash[:notice]).to eq("Your account has been deleted.")
+      expect(inertia).to render_component("home/index")
+      expect(inertia.props.deep_symbolize_keys[:flash]).to include(notice: "Your account has been deleted.")
     end
 
     it "refuses to delete the last admin and reports why" do

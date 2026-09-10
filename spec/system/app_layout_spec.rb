@@ -14,9 +14,17 @@ RSpec.describe "The application layout", type: :system, js: true do
     expect(page).to have_no_current_path(new_session_path, wait: 5)
   end
 
+  it "gives a visitor ways to sign in and register, and no signed-in links" do
+    visit root_path
+
+    expect(page).to have_link("Sign in", href: "/session/new")
+    expect(page).to have_link("Create account", href: "/registration/new")
+    expect(page).to have_no_button("Sign out")
+  end
+
   it "gives a member their own name and no admin links" do
     sign_in_through_the_form(member)
-    visit root_path
+    visit profile_path
 
     expect(page).to have_link("Grace Hopper", href: "/profile")
     expect(page).to have_no_link("Dashboard")
@@ -25,16 +33,31 @@ RSpec.describe "The application layout", type: :system, js: true do
 
   it "gives an admin the dashboard and users links" do
     sign_in_through_the_form(admin)
-    visit root_path
+    visit admin_dashboard_path
 
     expect(page).to have_link("Dashboard", href: "/admin")
     expect(page).to have_link("Users", href: "/admin/users")
     expect(page).to have_link("Ada Lovelace", href: "/profile")
   end
 
-  it "destroys the session when Sign out is clicked" do
+  it "sends a member who opens the root to their profile" do
     sign_in_through_the_form(member)
     visit root_path
+
+    expect(page).to have_current_path(profile_path)
+    expect(page).to have_css("h1", text: "Grace Hopper")
+  end
+
+  it "sends an admin who opens the root to the dashboard" do
+    sign_in_through_the_form(admin)
+    visit root_path
+
+    expect(page).to have_current_path(admin_dashboard_path)
+  end
+
+  it "destroys the session when Sign out is clicked" do
+    sign_in_through_the_form(member)
+    visit profile_path
 
     click_on "Sign out"
 
@@ -44,7 +67,7 @@ RSpec.describe "The application layout", type: :system, js: true do
 
   it "leaves the nav showing no signed-in user after signing out" do
     sign_in_through_the_form(member)
-    visit root_path
+    visit profile_path
 
     click_on "Sign out"
 
@@ -54,9 +77,9 @@ RSpec.describe "The application layout", type: :system, js: true do
 
   it "renders a flash alert in the banner" do
     sign_in_through_the_form(member)
-    visit admin_users_path # denied, and bounced back to the home page
+    visit admin_users_path # denied, bounced to the root, and on to the member's profile
 
-    expect(page).to have_current_path(root_path)
+    expect(page).to have_current_path(profile_path)
     expect(page).to have_css("[role=status]", text: "You are not authorized to do that.")
   end
 
@@ -70,9 +93,9 @@ RSpec.describe "The application layout", type: :system, js: true do
 
   it "shows no banner on a plain page load" do
     sign_in_through_the_form(member)
-    visit root_path
+    visit profile_path
 
-    expect(page).to have_css("h1", text: "Home")
+    expect(page).to have_css("h1", text: "Grace Hopper")
     expect(page).to have_no_css("[role=status]")
   end
 end

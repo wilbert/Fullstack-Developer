@@ -47,7 +47,7 @@ RSpec.describe "The user detail pages", type: :system, js: true do
 
     it "is reachable from the nav" do
       sign_in_through_the_form(member)
-      visit root_path
+      visit edit_profile_path
 
       click_on "Grace Hopper"
 

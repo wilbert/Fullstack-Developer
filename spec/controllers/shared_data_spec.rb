@@ -1,8 +1,7 @@
 require "rails_helper"
 
-# Every Inertia page in the app currently sits behind `require_authentication`,
-# so the signed-out branch of `auth.user` has no reachable route to exercise it.
-# This anonymous controller renders Inertia without authentication to pin it.
+# Pins the signed-out branch of `auth.user` on ApplicationController itself, so it
+# holds regardless of which real pages happen to allow unauthenticated access.
 RSpec.describe ApplicationController, type: :controller do
   controller(ApplicationController) do
     allow_unauthenticated_access

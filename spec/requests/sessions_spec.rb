@@ -63,10 +63,10 @@ RSpec.describe "Sessions", type: :request do
     end
 
     it "returns the user to the page they originally requested, ahead of the default landing page" do
-      get root_url # bounced to sign-in, stashing the destination
+      get edit_profile_url # bounced to sign-in, stashing the destination
       post session_url, params: { email_address: "ada@example.com", password: password }
 
-      expect(response).to redirect_to(root_url)
+      expect(response).to redirect_to(edit_profile_url)
     end
   end
 
@@ -101,7 +101,7 @@ RSpec.describe "Sessions", type: :request do
 
   describe "authentication guard" do
     it "redirects a signed-out visitor away from a protected page" do
-      get root_url
+      get profile_url
 
       expect(response).to redirect_to(new_session_url)
     end
@@ -109,7 +109,7 @@ RSpec.describe "Sessions", type: :request do
     it "lets a signed-in user through" do
       sign_in_as(user)
 
-      get root_url
+      get profile_url
 
       expect(response).to have_http_status(:ok)
     end

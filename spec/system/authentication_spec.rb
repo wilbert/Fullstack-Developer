@@ -43,4 +43,16 @@ RSpec.describe "Signing in", type: :system do
     expect(page).to have_current_path(profile_path)
     expect(user.sessions.count).to eq(1)
   end
+
+  it "lands an admin on the user admin dashboard", :js do
+    admin = create(:user, :admin, email_address: "boss@example.com", password: "password")
+    visit new_session_path
+
+    fill_in "email_address", with: "boss@example.com"
+    fill_in "password", with: "password"
+    click_on "Sign in"
+
+    expect(page).to have_current_path(admin_dashboard_path)
+    expect(admin.sessions.count).to eq(1)
+  end
 end

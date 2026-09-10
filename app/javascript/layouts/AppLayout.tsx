@@ -2,7 +2,17 @@ import { Link, router, usePage } from '@inertiajs/react'
 import { PropsWithChildren, useEffect, useId, useState } from 'react'
 import type { SharedProps } from '@/types'
 
-type NavLink = { href: string; label: string }
+type NavLink = {
+  href: string
+  label: string
+  fullReload?: boolean
+}
+
+function NavItem({ link, className }: { link: NavLink; className: string }) {
+  return link.fullReload
+    ? <a href={link.href} className={className}>{link.label}</a>
+    : <Link href={link.href} className={className}>{link.label}</Link>
+}
 
 export default function AppLayout({ children }: PropsWithChildren) {
   const { auth, flash } = usePage<SharedProps>().props
@@ -22,7 +32,10 @@ export default function AppLayout({ children }: PropsWithChildren) {
           : []),
         { href: '/profile', label: auth.user.full_name },
       ]
-    : [{ href: '/session/new', label: 'Sign in' }]
+    : [
+        { href: '/session/new', label: 'Sign in', fullReload: true },
+        { href: '/registration/new', label: 'Create account' },
+      ]
 
   return (
     <div className="flex min-h-dvh flex-col bg-slate-50 text-slate-900">
@@ -32,7 +45,7 @@ export default function AppLayout({ children }: PropsWithChildren) {
 
           <div className="hidden items-center gap-4 text-sm sm:flex">
             {links.map((link) => (
-              <Link key={link.href} href={link.href} className="hover:underline">{link.label}</Link>
+              <NavItem key={link.href} link={link} className="hover:underline" />
             ))}
             {auth.user && (
               <Link href="/session" method="delete" as="button" className="text-slate-500 hover:underline">
@@ -59,7 +72,7 @@ export default function AppLayout({ children }: PropsWithChildren) {
           <ul className="mx-auto max-w-6xl">
             {links.map((link) => (
               <li key={link.href}>
-                <Link href={link.href} className="block py-3 text-base">{link.label}</Link>
+                <NavItem link={link} className="block py-3 text-base" />
               </li>
             ))}
             {auth.user && (
