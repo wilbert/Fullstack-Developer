@@ -106,10 +106,10 @@ export default function Show({ import: record }: Props) {
           </h2>
           <ul className="mt-3 divide-y divide-slate-100 rounded-lg border border-slate-200 bg-white text-sm">
             {record.error_report.map((entry) => (
-              <li key={entry.row} className="flex gap-4 px-4 py-2">
+              <li key={entry.row} className="flex flex-wrap gap-x-4 gap-y-1 px-4 py-2">
                 <span className="w-16 shrink-0 tabular-nums text-slate-400">Row {entry.row}</span>
-                <span className="w-64 shrink-0 truncate">{entry.identifier || '(no email)'}</span>
-                <span className="text-red-700">{entry.errors.join(', ')}</span>
+                <span className="min-w-0 flex-1 truncate sm:w-64 sm:flex-none">{entry.identifier || '(no email)'}</span>
+                <span className="w-full text-red-700 sm:w-auto">{entry.errors.join(', ')}</span>
               </li>
             ))}
           </ul>

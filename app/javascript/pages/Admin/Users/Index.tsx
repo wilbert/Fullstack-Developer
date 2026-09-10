@@ -97,13 +97,13 @@ export default function Index() {
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search by name"
           aria-label="Search users by name"
-          className="w-64 rounded-md border border-slate-300 px-3 py-2 text-sm"
+          className="w-full rounded-md border border-slate-300 px-3 py-2 text-base sm:w-64 sm:text-sm"
         />
         <select
           value={filters.role ?? ''}
           onChange={(event) => visit({ role: (event.target.value || null) as UserRole | null })}
           aria-label="Filter by role"
-          className="rounded-md border border-slate-300 px-3 py-2 text-sm"
+          className="rounded-md border border-slate-300 py-2 pr-9 pl-3 text-base sm:text-sm"
         >
           <option value="">All roles</option>
           <option value="admin">Admin</option>
