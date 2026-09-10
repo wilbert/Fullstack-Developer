@@ -6,8 +6,8 @@ RSpec.describe ProcessImportJob, type: :job do
 
   let(:progress) { [] }
 
-  # Imports::ProgressBroadcaster does not exist yet. A recorder stands in for it
-  # so the job can run, and so each broadcast's view of the import can be checked.
+  # A recorder stands in for Imports::ProgressBroadcaster so the status and row
+  # count each broadcast would have announced can be checked, in order.
   before do
     snapshots = progress
     stub_const("Imports::ProgressBroadcaster", Module.new do
