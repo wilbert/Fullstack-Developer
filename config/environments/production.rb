@@ -22,7 +22,7 @@ Rails.application.configure do
   # config.asset_host = "http://assets.example.com"
 
   # Store uploads in the ACTIVE_STORAGE_SERVICE from config/storage.yml (amazon unless overridden).
-  config.active_storage.service = ENV.fetch("ACTIVE_STORAGE_SERVICE", :amazon).to_sym
+  config.active_storage.service = ENV.fetch("ACTIVE_STORAGE_SERVICE", :local).to_sym
 
   # kamal-proxy terminates SSL and doesn't forward X-Forwarded-Proto, so assume SSL and force it.
   # The local Kamal destination serves plain HTTP and sets RAILS_FORCE_SSL=false.
