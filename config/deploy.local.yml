@@ -16,10 +16,9 @@ servers:
       - 127.0.0.1
 
 ssh:
-  port: 2222
-  keys: [ ".kamal/local/ssh/id_ed25519" ]
-  keys_only: true
-  config: false
+  user: wilbert
+  keys:
+    - ~/.ssh/id_rsa
 
 registry:
   server: localhost:5555
