@@ -5,6 +5,14 @@ RSpec.describe "Importing users", :js, type: :system do
 
   let(:admin)  { create(:user, :admin, full_name: "Ada Lovelace", email_address: "ada@example.com") }
   let(:folder) { Dir.mktmpdir("import-flow") }
+  let(:team_csv) do
+    spreadsheet("team.csv", <<~CSV)
+      Nome,E-mail,Perfil
+      Margaret Hamilton,margaret@example.com,admin
+      Grace Hopper,grace@example.com,member
+      Nobody,not-an-email,member
+    CSV
+  end
 
   after { FileUtils.remove_entry(folder) }
 
@@ -20,23 +28,25 @@ RSpec.describe "Importing users", :js, type: :system do
     File.join(folder, name).tap { |path| File.write(path, content) }
   end
 
-  it "uploads a spreadsheet from the users page and follows it to the end" do
-    create(:user, full_name: "Grace Hopper", email_address: "grace@example.com")
-    file = spreadsheet("team.csv", <<~CSV)
-      Nome,E-mail,Perfil
-      Margaret Hamilton,margaret@example.com,admin
-      Grace Hopper,grace@example.com,member
-      Nobody,not-an-email,member
-    CSV
+  def start_import_of(file)
     sign_in_through_the_form(admin)
     visit admin_users_path
-
     click_on "Import users"
     attach_file "Spreadsheet", file
     click_on "Start import"
+  end
+
+  it "uploads a spreadsheet from the users page and shows it queued" do
+    start_import_of(team_csv)
 
     expect(page).to have_css("h1", text: "team.csv")
     expect(page).to have_css("[role=status]", text: "Import queued.")
+  end
+
+  it "follows the import to the end as the job reports progress" do
+    create(:user, full_name: "Grace Hopper", email_address: "grace@example.com")
+    start_import_of(team_csv)
+    find("h1", text: "team.csv")
 
     # The job runs here in the test process; the page has to hear about it over
     # ImportChannel, exactly as it would from a Solid Queue worker.
@@ -46,7 +56,10 @@ RSpec.describe "Importing users", :js, type: :system do
     expect(page).to have_text("3 of 3 rows (100%)")
     within("section", text: "Rejected rows") { expect(page).to have_text("not-an-email") }
     expect(User.find_by(email_address: "margaret@example.com")).to be_admin
+  end
 
+  it "links from an import to the list of all imports" do
+    start_import_of(team_csv)
     click_on "All imports"
 
     expect(page).to have_current_path(admin_imports_path)

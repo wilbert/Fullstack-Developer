@@ -18,6 +18,10 @@ Layout/LineLength:
   Enabled: true
   Max: 120
 
+# In controller specs, `controller(...) do ... end` is a class body, where described_class isn't defined.
+RSpec/DescribedClass:
+  SkipBlocks: true
+
 RSpec/ExampleLength:
   Max: 15
 

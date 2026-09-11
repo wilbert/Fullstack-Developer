@@ -25,7 +25,7 @@ RSpec.describe Import, type: :model do
 
   describe "status" do
     it do
-      expect(subject).to define_enum_for(:status)
+      expect(import).to define_enum_for(:status)
         .with_values(pending: 0, parsing: 1, processing: 2, completed: 3, failed: 4, cancelled: 5)
         .validating
     end

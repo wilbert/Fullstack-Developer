@@ -4,8 +4,9 @@ RSpec.describe "Admin::Dashboards", type: :request do
   def props = inertia.props.deep_symbolize_keys
 
   let!(:admin)  { create(:user, :admin, email_address: "boss@example.com", password: "password") }
-  let!(:member) {
- create(:user, full_name: "Regular Member", email_address: "member@example.com", password: "password") }
+  let!(:member) do
+    create(:user, full_name: "Regular Member", email_address: "member@example.com", password: "password")
+  end
 
   it "requires authentication" do
     get admin_dashboard_path

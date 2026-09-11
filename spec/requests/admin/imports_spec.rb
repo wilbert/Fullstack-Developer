@@ -93,7 +93,7 @@ RSpec.describe "Admin::Imports", type: :request do
   end
 
   describe "POST /admin/imports" do
-    it "saves the upload against the admin, queues it and shows its page" do
+    it "saves the upload against the admin and queues it" do
       sign_in_as(admin)
 
       expect { post admin_imports_path, params: { import: { file: upload } } }
@@ -102,7 +102,14 @@ RSpec.describe "Admin::Imports", type: :request do
       import = admin.imports.last
       expect(ProcessImportJob).to have_been_enqueued.with(import)
       expect(import.file.filename.to_s).to eq("users.csv")
-      expect(response).to redirect_to(admin_import_path(import))
+    end
+
+    it "shows the queued import's page" do
+      sign_in_as(admin)
+
+      post admin_imports_path, params: { import: { file: upload } }
+
+      expect(response).to redirect_to(admin_import_path(admin.imports.last))
       expect(flash[:notice]).to eq("Import queued.")
     end
 

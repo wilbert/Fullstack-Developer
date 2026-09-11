@@ -39,7 +39,8 @@ RSpec.describe "The import page", :js, type: :system do
 
   it "lists the rows that were rejected" do
     import = create(:import, status: :completed, total_rows: 2, processed_rows: 2, failed_count: 1,
-                             error_report: [ { row: 2, identifier: "not-an-email", errors: [ "Email address is invalid" ] } ])
+                             error_report: [ { row: 2, identifier: "not-an-email",
+                                               errors: [ "Email address is invalid" ] } ])
     sign_in_through_the_form(admin)
 
     visit admin_import_path(import)

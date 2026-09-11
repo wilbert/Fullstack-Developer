@@ -11,12 +11,17 @@ RSpec.describe "The admin dashboard", :js, type: :system do
     expect(page).to have_no_current_path(new_session_path, wait: 5)
   end
 
-  it "shows the counts an admin lands on after signing in" do
-    create_list(:user, 2)
+  it "is where an admin lands after signing in" do
     sign_in_through_the_form(admin)
 
     expect(page).to have_current_path(admin_dashboard_path)
     expect(page).to have_css("h1", text: "Admin dashboard")
+  end
+
+  it "shows the total and the count per role" do
+    create_list(:user, 2)
+    sign_in_through_the_form(admin)
+
     expect(page).to have_css("dt", text: /Total users/i)
     expect(page).to have_css("dd", text: "3")
     expect(page).to have_css("dt", text: /Admins/i)

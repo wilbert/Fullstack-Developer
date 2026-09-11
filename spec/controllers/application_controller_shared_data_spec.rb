@@ -3,7 +3,7 @@ require "rails_helper"
 # Pins the signed-out branch of `auth.user` on ApplicationController itself, so it
 # holds regardless of which real pages happen to allow unauthenticated access.
 RSpec.describe ApplicationController, type: :controller do
-  controller(ApplicationController) do
+  controller(described_class) do
     allow_unauthenticated_access
 
     def index = render(inertia: "home/index")

@@ -61,14 +61,9 @@ RSpec.describe UserPolicy do
     subject(:policy) { policy_for(member, other) }
 
     it "is denied every action" do
-      expect(policy.index?).to be(false)
-      expect(policy.show?).to be(false)
-      expect(policy.create?).to be(false)
-      expect(policy.update?).to be(false)
-      expect(policy.destroy?).to be(false)
-      expect(policy.new?).to be(false)
-      expect(policy.edit?).to be(false)
-      expect(policy.toggle_role?).to be(false)
+      actions = %i[index? show? create? update? destroy? new? edit? toggle_role?]
+
+      expect(actions.select { |action| policy.public_send(action) }).to be_empty
     end
   end
 

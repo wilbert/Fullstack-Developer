@@ -18,20 +18,18 @@ RSpec.describe ApplicationPolicy do
 
   describe "defaults" do
     it "denies every action so subclasses must opt in" do
-      expect(policy.index?).to be(false)
-      expect(policy.show?).to be(false)
-      expect(policy.create?).to be(false)
-      expect(policy.update?).to be(false)
-      expect(policy.destroy?).to be(false)
-      expect(policy.new?).to be(false)
-      expect(policy.edit?).to be(false)
+      actions = %i[index? show? create? update? destroy? new? edit?]
+
+      expect(actions.select { |action| policy.public_send(action) }).to be_empty
     end
 
     it "ties the form predicates to the write they lead to" do
-      allow(policy).to receive_messages(create?: true, update?: true)
+      writer = Class.new(described_class) do
+        def create? = true
+        def update? = true
+      end
 
-      expect(policy.new?).to be(true)
-      expect(policy.edit?).to be(true)
+      expect(writer.new(user, record)).to have_attributes(new?: true, edit?: true)
     end
 
     it "permits no attributes" do

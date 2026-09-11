@@ -28,8 +28,8 @@ RSpec.describe ImportSerializer do
       report = described_class.new(import.reload).as_json[:error_report]
 
       expect(report.size).to eq(50)
-      expect(report.first).to eq("row" => 1, "identifier" => "row1@example.com",
-"errors" => [ "Email address is invalid" ])
+      expect(report.first)
+        .to eq("row" => 1, "identifier" => "row1@example.com", "errors" => [ "Email address is invalid" ])
     end
   end
 

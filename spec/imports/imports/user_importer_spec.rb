@@ -50,9 +50,11 @@ RSpec.describe Imports::UserImporter do
     end
 
     it "never looks the email address up" do
-      expect(User).not_to receive(:find_or_initialize_by)
+      allow(User).to receive(:find_or_initialize_by)
 
       importer.call(row(email_address: "not an email"))
+
+      expect(User).not_to have_received(:find_or_initialize_by)
     end
   end
 

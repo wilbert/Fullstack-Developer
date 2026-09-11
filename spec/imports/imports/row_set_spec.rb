@@ -25,8 +25,10 @@ RSpec.describe Imports::RowSet do
     it "reads the file once however often it is asked" do
       row_set = Imports::CsvRowSet.new(csv_file("name\nGrace Hopper\n"))
 
-      expect(CSV).to receive(:foreach).once.and_call_original
+      allow(CSV).to receive(:foreach).and_call_original
+
       expect(2.times.map { row_set.count }).to eq([ 1, 1 ])
+      expect(CSV).to have_received(:foreach).once
     end
   end
 end

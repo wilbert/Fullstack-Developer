@@ -2,6 +2,16 @@ require "rails_helper"
 
 RSpec.describe "The layout on a phone", :js, type: :system do
   let(:admin) { create(:user, :admin, full_name: "Ada Lovelace", email_address: "ada@example.com") }
+  # Long names and addresses, the text most likely to push a phone layout sideways.
+  let(:member) do
+    create(:user, full_name: "Grace Brewster Murray Hopper",
+                  email_address: "grace.brewster.murray.hopper@navy.example.com")
+  end
+  let(:import) do
+    create(:import, status: :completed, total_rows: 1, processed_rows: 1, failed_count: 1,
+                    error_report: [ { row: 1, identifier: "an-unusually-long-address-for-a-phone@example.com",
+                                      errors: [ "Email address is invalid" ] } ])
+  end
 
   # iPhone-sized viewport. The window outlives the example, so put it back.
   before { page.current_window.resize_to(390, 844) }
@@ -18,12 +28,6 @@ RSpec.describe "The layout on a phone", :js, type: :system do
   def sideways_overflow = page.evaluate_script("document.documentElement.scrollWidth - window.innerWidth")
 
   it "fits the sign-in page and every signed-in page to the screen" do
-    member = create(:user, full_name: "Grace Brewster Murray Hopper",
-                           email_address: "grace.brewster.murray.hopper@navy.example.com")
-    import = create(:import, status: :completed, total_rows: 1, processed_rows: 1, failed_count: 1,
-                             error_report: [ { row: 1, identifier: "an-unusually-long-address-for-a-phone@example.com",
-                                               errors: [ "Email address is invalid" ] } ])
-
     visit new_session_path
     expect(sideways_overflow).to be <= 0
 
