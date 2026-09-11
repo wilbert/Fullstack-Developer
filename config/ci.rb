@@ -7,6 +7,5 @@ ActiveSupport::ContinuousIntegration.run do
   step "Security: Brakeman", "bin/brakeman --quiet --no-pager --exit-on-warn"
   step "Types: TypeScript", "npm run typecheck"
   step "Tests: databases", "bin/rails parallel:create parallel:load_schema"
-  step "Tests: frontend build", "RAILS_ENV=test bin/vite build"
   step "Tests", "bundle exec parallel_rspec"
 end

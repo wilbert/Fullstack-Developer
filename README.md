@@ -124,7 +124,7 @@ To try the importer, upload a CSV such as [spec/fixtures/files/users.csv](spec/f
 
 ## Tests
 
-The suite uses RSpec: model, policy, query, job, channel, request, and serializer specs, plus Capybara system specs driven by Playwright. It runs in parallel across CPU cores with [`parallel_tests`](https://github.com/grosser/parallel_tests). SimpleCov merges the workers' results and **fails the run below 90% line / 80% branch coverage**. The last local run measured 99.45% line and 98.38% branch.
+The suite uses RSpec: model, policy, query, job, channel, request, and serializer specs, plus Capybara system specs driven by Playwright. It runs in parallel across CPU cores with [`parallel_tests`](https://github.com/grosser/parallel_tests). SimpleCov merges the workers' results and **fails the run below 90% line / 80% branch coverage**. The last local parallel run (8 workers) measured 100% line and 98.38% branch coverage.
 
 ```bash
 # once: one test database per worker, and the browser used by system specs
@@ -132,14 +132,12 @@ RAILS_ENV=test bin/rails parallel:create parallel:load_schema
 npx playwright install chromium
 
 # each run
-RAILS_ENV=test bin/vite build          # build the test bundle once, so workers don't race to build it
-bundle exec parallel_rspec             # whole suite, in parallel
-
-bundle exec rspec spec/requests        # a single process, for a subset
+bundle exec parallel_rspec                    # whole suite, in parallel
+bundle exec rspec spec/requests               # a single process, for a subset
 bundle exec parallel_rspec -o "--tag '~js'"   # skip the browser specs
 ```
 
-Set `POSTGRES_USER` / `POSTGRES_PASSWORD` if your local PostgreSQL user isn't `umanni`.
+Set `POSTGRES_USER` / `POSTGRES_PASSWORD` if your local PostgreSQL user isn't `umanni`. Node must be on your `PATH`: the test bundle is built by Vite when it's out of date. [spec/support/vite.rb](spec/support/vite.rb) builds it under a lock at startup, so parallel workers don't all rebuild it at once.
 
 **Cross-browser:** system specs run in Chromium by default. To run the same specs in Firefox or WebKit (Safari's engine), install the engine and set `PLAYWRIGHT_BROWSER`:
 

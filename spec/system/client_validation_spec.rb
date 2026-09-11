@@ -2,7 +2,7 @@ require "rails_helper"
 
 # The React forms check their fields in the browser (app/javascript/lib/validation.ts)
 # while the user works through them, and only send what the server would accept.
-RSpec.describe "Client-side form validation", type: :system, js: true do
+RSpec.describe "Client-side form validation", :js, type: :system do
   let(:admin) { create(:user, :admin, full_name: "Ada Lovelace", email_address: "ada@example.com") }
 
   def sign_in_through_the_form(user)

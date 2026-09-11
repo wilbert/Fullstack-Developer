@@ -38,3 +38,8 @@ Claude Opus 5 helped investigate and fix bugs found during development.
 AI was used to:
 - review Pull Requests before merging, pointing out correctness issues and possible improvements;
 - write Pull Request descriptions summarizing the changes in each PR.
+
+### 7. Documentation and requirements review
+Claude Opus 5 was used to:
+- write project documentation (`README.md`, `DEVELOPMENT_SETUP.md`, `KAMAL_DISCLOUSURE.md`);
+- check the application against the challenge requirements and implement the gaps it found: client-side form validation, parallel test execution, removing unused Hotwire/importmap and Redis configuration, and running the Solid Queue worker inside Puma in Docker Compose.

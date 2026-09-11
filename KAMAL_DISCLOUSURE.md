@@ -67,6 +67,4 @@ docker compose build
 docker compose up
 ```
 
-The app is then available at http://localhost:3000.
-
-Spreadsheet imports also need a job worker, started with `docker compose exec -d web ./bin/jobs`. See [DEVELOPMENT_SETUP.md](DEVELOPMENT_SETUP.md) for the full guide: environment variables, seeding, background jobs, and troubleshooting.
+The app is then available at http://localhost:3000. The Solid Queue worker runs inside Puma, so spreadsheet imports work without any extra step. See [DEVELOPMENT_SETUP.md](DEVELOPMENT_SETUP.md) for the full guide: environment variables, seeding, background jobs, and troubleshooting.
