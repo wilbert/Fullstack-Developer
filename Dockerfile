@@ -23,7 +23,6 @@ RUN apt-get update -qq && \
 ENV RAILS_ENV=development \
     BUNDLE_DEPLOYMENT=1 \
     BUNDLE_PATH=/usr/local/bundle \
-    BUNDLE_WITHOUT=development:test \
     LD_PRELOAD=/usr/local/lib/libjemalloc.so
 
 # ---------- build ----------
