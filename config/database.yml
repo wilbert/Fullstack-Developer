@@ -3,7 +3,7 @@ default: &default
   encoding: unicode
   host: <%= ENV.fetch("DB_HOST", "localhost") %>
   username: <%= ENV.fetch("POSTGRES_USER", "umanni") %>
-  password: <%= ENV.fetch("POSTGRES_PASSWORD", "") %>
+  password: <%= ENV.fetch("POSTGRES_PASSWORD", "secret") %>
   max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
 
@@ -28,7 +28,7 @@ development:
 test:
   <<: *default
   # parallel_tests gives each worker its own database: fullstack_developer_test, fullstack_developer_test2, ...
-  database: fullstack_developer_test<%= ENV["TEST_ENV_NUMBER"] %>
+  database: fullstack_developer_testx
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
