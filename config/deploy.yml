@@ -35,7 +35,9 @@ env:
     RAILS_MAX_THREADS: 5
     WEB_CONCURRENCY: 2
     SOLID_QUEUE_IN_PUMA: false
-    INERTIA_SSR_ENABLED: false
+    INERTIA_SSR_ENABLED: true
+    # JIT compiler: yjit, zjit or off (lib/ruby_jit.rb). PERFORMANCE.md compares them on this app.
+    RUBY_JIT: yjit
     ACTIVE_STORAGE_SERVICE: amazon
     AWS_REGION: us-east-1
     AWS_S3_BUCKET: umanni-users-production

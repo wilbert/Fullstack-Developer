@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" class="bg-slate-50">
   <head>
-    <title data-inertia><%= content_for(:title) || "Umanni" %></title>
+    <%# A server-rendered Inertia page brings its own <title> (from <Head>) in inertia_ssr_head below. %>
+    <% if inertia_ssr_head.blank? %>
+      <title data-inertia><%= content_for(:title) || "Umanni" %></title>
+    <% end %>
     <%# viewport-fit=cover lets the page run under the notch and home indicator;
         the safe-* utilities in application.css pad content back out of those areas. %>
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">

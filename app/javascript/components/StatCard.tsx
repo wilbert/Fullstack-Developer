@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useLocaleFormat } from '@/hooks/useLocaleFormat'
 
 const DURATION = 400
 
@@ -8,6 +9,7 @@ const prefersReducedMotion = () =>
 export default function StatCard({ label, value }: { label: string; value: number }) {
   const [shown, setShown] = useState(value)
   const from = useRef(value)
+  const format = useLocaleFormat()
 
   useEffect(() => {
     if (from.current === value) return
@@ -45,11 +47,11 @@ export default function StatCard({ label, value }: { label: string; value: numbe
     <div className="rounded-lg border border-slate-200 bg-white p-6">
       <dt className="text-xs font-medium uppercase tracking-wide text-slate-500">{label}</dt>
       <dd className="mt-2 text-4xl font-semibold tabular-nums" aria-hidden>
-        {shown.toLocaleString()}
+        {format.number(shown)}
       </dd>
       {/* Announce the settled count once, not once per frame. */}
       <span className="sr-only" aria-live="polite">
-        {label}: {value.toLocaleString()}
+        {label}: {format.number(value)}
       </span>
     </div>
   )

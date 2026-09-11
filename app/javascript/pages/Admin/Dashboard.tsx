@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react'
 import AppLayout from '@/layouts/AppLayout'
+import LocalTime from '@/components/LocalTime'
 import StatCard from '@/components/StatCard'
 import { useDashboardStream } from '@/hooks/useDashboardStream'
 import type { DashboardStats } from '@/types'
@@ -7,7 +8,7 @@ import type { DashboardStats } from '@/types'
 /** Props from Admin::DashboardsController#show. */
 type Props = { stats: DashboardStats }
 
-const generatedAt = new Intl.DateTimeFormat(undefined, { timeStyle: 'medium' })
+const GENERATED_AT: Intl.DateTimeFormatOptions = { timeStyle: 'medium' }
 
 export default function Dashboard({ stats }: Props) {
   useDashboardStream()
@@ -20,10 +21,7 @@ export default function Dashboard({ stats }: Props) {
         <div className="flex flex-wrap items-baseline gap-3">
           <h1 className="text-2xl font-semibold tracking-tight">Admin dashboard</h1>
           <span className="text-xs text-slate-400">
-            Updated{' '}
-            <time dateTime={stats.generated_at}>
-              {generatedAt.format(new Date(stats.generated_at))}
-            </time>
+            Updated <LocalTime dateTime={stats.generated_at} options={GENERATED_AT} />
           </span>
         </div>
         <Link

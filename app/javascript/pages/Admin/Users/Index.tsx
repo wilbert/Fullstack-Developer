@@ -2,6 +2,7 @@ import { Head, Link, router, usePage } from '@inertiajs/react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import AppLayout from '@/layouts/AppLayout'
 import Avatar from '@/components/Avatar'
+import LocalTime from '@/components/LocalTime'
 import RoleBadge from '@/components/RoleBadge'
 import type { Filters, SearchParams, SortKey, User, UserRole } from '@/types'
 
@@ -13,7 +14,7 @@ const COLUMNS: { key: SortKey; label: string }[] = [
   { key: 'created_at', label: 'Joined' },
 ]
 
-const joinedAt = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' })
+const JOINED_AT: Intl.DateTimeFormatOptions = { dateStyle: 'medium' }
 
 /** Drops the read-only half of `filters` so pagination links carry only real query params. */
 function searchParams(filters: Filters): SearchParams {
@@ -165,9 +166,7 @@ export default function Index() {
                   <RoleBadge role={user.role} />
                 </td>
                 <td className="px-4 py-3 text-slate-600">
-                  <time dateTime={user.created_at}>
-                    {joinedAt.format(new Date(user.created_at))}
-                  </time>
+                  <LocalTime dateTime={user.created_at} options={JOINED_AT} />
                 </td>
                 <td className="px-4 py-3 text-slate-600">{user.email_address}</td>
                 <td className="px-4 py-3">

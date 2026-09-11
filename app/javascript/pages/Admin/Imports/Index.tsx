@@ -1,14 +1,18 @@
 import { Head, Link } from '@inertiajs/react'
 import AppLayout from '@/layouts/AppLayout'
 import ImportStatusBadge from '@/components/ImportStatusBadge'
+import LocalTime from '@/components/LocalTime'
+import { useLocaleFormat } from '@/hooks/useLocaleFormat'
 import type { Import } from '@/types'
 
 /** Props from Admin::ImportsController#index. */
 type Props = { imports: Import[] }
 
-const uploadedAt = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' })
+const UPLOADED_AT: Intl.DateTimeFormatOptions = { dateStyle: 'medium', timeStyle: 'short' }
 
 export default function Index({ imports }: Props) {
+  const format = useLocaleFormat()
+
   return (
     <>
       <Head title="Imports" />
@@ -71,24 +75,22 @@ export default function Index({ imports }: Props) {
                   <ImportStatusBadge status={record.status} />
                 </td>
                 <td className="px-4 py-3 tabular-nums text-slate-600">
-                  {record.processed_rows.toLocaleString()} of {record.total_rows.toLocaleString()}
+                  {format.number(record.processed_rows)} of {format.number(record.total_rows)}
                   <span className="text-slate-400"> ({record.progress}%)</span>
                 </td>
                 <td className="px-4 py-3 text-right tabular-nums">
-                  {record.created_count.toLocaleString()}
+                  {format.number(record.created_count)}
                 </td>
                 <td className="px-4 py-3 text-right tabular-nums">
-                  {record.skipped_count.toLocaleString()}
+                  {format.number(record.skipped_count)}
                 </td>
                 <td
                   className={`px-4 py-3 text-right tabular-nums ${record.failed_count > 0 ? 'text-red-600' : ''}`}
                 >
-                  {record.failed_count.toLocaleString()}
+                  {format.number(record.failed_count)}
                 </td>
                 <td className="px-4 py-3 text-slate-600">
-                  <time dateTime={record.created_at}>
-                    {uploadedAt.format(new Date(record.created_at))}
-                  </time>
+                  <LocalTime dateTime={record.created_at} options={UPLOADED_AT} />
                 </td>
               </tr>
             ))}

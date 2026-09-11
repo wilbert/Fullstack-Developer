@@ -1,19 +1,12 @@
 import { createInertiaApp } from '@inertiajs/react'
+import { inertiaDefaults } from '@/lib/inertia'
 
 void createInertiaApp({
   pages: '../pages',
 
   strictMode: true,
 
-  defaults: {
-    form: {
-      forceIndicesArrayFormatInFormData: false,
-      withAllErrors: true,
-    },
-    visitOptions: () => {
-      return { queryStringArrayFormat: 'brackets' }
-    },
-  },
+  defaults: inertiaDefaults,
 }).catch((error) => {
   // This ensures this entrypoint is only loaded on Inertia pages
   // by checking for the presence of the root element (#app by default).

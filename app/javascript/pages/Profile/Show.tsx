@@ -1,13 +1,14 @@
 import { Head, Link } from '@inertiajs/react'
 import AppLayout from '@/layouts/AppLayout'
 import Avatar from '@/components/Avatar'
+import LocalTime from '@/components/LocalTime'
 import RoleBadge from '@/components/RoleBadge'
 import type { User } from '@/types'
 
 /** Props from ProfilesController#show. */
 type Props = { user: User }
 
-const joinedAt = new Intl.DateTimeFormat(undefined, { dateStyle: 'long' })
+const JOINED_AT: Intl.DateTimeFormatOptions = { dateStyle: 'long' }
 
 export default function ProfileShow({ user }: Props) {
   return (
@@ -40,7 +41,7 @@ export default function ProfileShow({ user }: Props) {
         <div className="flex justify-between gap-4 px-4 py-3">
           <dt className="text-slate-500">Joined</dt>
           <dd>
-            <time dateTime={user.created_at}>{joinedAt.format(new Date(user.created_at))}</time>
+            <LocalTime dateTime={user.created_at} options={JOINED_AT} />
           </dd>
         </div>
       </dl>

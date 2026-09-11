@@ -1,7 +1,8 @@
 {
   "all": {
     "sourceCodeDir": "app/javascript",
-    "watchAdditionalPaths": []
+    "watchAdditionalPaths": [],
+    "ssrBuildEnabled": true
   },
   "development": {
     "autoBuild": true,
@@ -12,6 +13,7 @@
   "test": {
     "autoBuild": true,
     "publicOutputDir": "vite-test",
+    "ssrOutputDir": "public/vite-ssr-test",
     "port": 3037
   }
 }

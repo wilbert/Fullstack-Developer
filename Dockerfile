@@ -59,7 +59,8 @@ RUN SECRET_KEY_BASE_DUMMY=1 \
     VITE_RUBY_SKIP_ASSETS_PRECOMPILE_INSTALL=true \
     ./bin/rails assets:precompile
 
-# Vite output is fully bundled into public/vite; no SSR, so Node isn't needed at runtime.
+# The browser assets and the SSR server (public/vite-ssr/ssr.js) are both self-contained
+# bundles, so the runtime needs the node binary but not node_modules.
 RUN rm -rf node_modules
 
 # ---------- final ----------
@@ -67,6 +68,8 @@ FROM base
 
 COPY --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
 COPY --from=build /rails /rails
+# Runs the Inertia SSR server, which the inertia_ssr Puma plugin (config/puma.rb) starts.
+COPY --from=build /usr/local/node/bin/node /usr/local/bin/node
 
 # Code stays root-owned; the app user can only write where Rails needs to.
 RUN groupadd --system --gid 1000 rails && \

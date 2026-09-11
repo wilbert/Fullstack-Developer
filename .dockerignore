@@ -36,8 +36,8 @@
 /app/assets/builds/*
 !/app/assets/builds/.keep
 /public/assets
-/public/vite
-/public/vite-ssr
+# Vite output (vite, vite-dev, vite-test, vite-ssr, ...) is rebuilt inside the image.
+/public/vite*
 
 # Ignore test suite and its artifacts.
 /spec

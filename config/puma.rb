@@ -37,6 +37,10 @@ plugin :tmp_restart
 # Run the Solid Queue supervisor inside of Puma for single-server deployments.
 plugin :solid_queue if ENV["SOLID_QUEUE_IN_PUMA"] == "true"
 
+# Run the Inertia SSR server (public/vite-ssr/ssr.js) next to Puma and restart it if it crashes.
+# It stays off when SSR is disabled, when `bin/vite dev` serves SSR, or when no bundle is built.
+plugin :inertia_ssr
+
 # Specify the PID file. Defaults to tmp/pids/server.pid in development.
 # In other environments, only set the PID file if requested.
 pidfile ENV["PIDFILE"] if ENV["PIDFILE"]

@@ -99,11 +99,13 @@ The resulting image is named `fullstack-developer-web:latest`. [Dockerfile](Dock
      │ 4. bootsnap precompile                                      │
      │ 5. bin/rails assets:precompile                              │
      │      → Vite build (React + Tailwind) into public/vite-dev/  │
+     │      → Vite SSR build (Node server) into public/vite-ssr/   │
      │ 6. rm -rf node_modules                                      │
      └──────────┬──────────────────────────────────────────────────┘
-                │ copy /usr/local/bundle and /rails only
+                │ copy /usr/local/bundle, /rails and the node binary
      ┌──────────▼─────────── final ───────────┐
      │ base + gems + app + compiled assets    │
+     │ + node, for the Inertia SSR server     │
      │ runs as non-root user `rails` (1000)   │
      │ ENTRYPOINT bin/docker-entrypoint       │
      │ CMD ./bin/thrust ./bin/rails server    │
@@ -114,7 +116,7 @@ The resulting image is named `fullstack-developer-web:latest`. [Dockerfile](Dock
 Things to know about the build:
 
 - **Layer order matters for speed.** Gems and npm packages are installed *before* `COPY . .`. Editing app code reuses those layers. Changing `Gemfile.lock` or `package-lock.json` triggers a full reinstall.
-- **Frontend assets are compiled at build time.** Vite is the only asset pipeline: it bundles the React app and builds Tailwind through `@tailwindcss/vite`. Because `RAILS_ENV=development`, it writes to `public/vite-dev/` (see [config/vite.json](config/vite.json)). Node is removed from the final image, which works because the assets are already built. At runtime, vite_ruby logs `Skipping vite build. Watched files have not changed since the last build`.
+- **Frontend assets are compiled at build time.** Vite is the only asset pipeline: it bundles the React app and builds Tailwind through `@tailwindcss/vite`. Because `RAILS_ENV=development`, it writes to `public/vite-dev/` (see [config/vite.json](config/vite.json)). The same step runs the SSR build (`ssrBuildEnabled`), which bundles React and Inertia into a self-contained Node server, `public/vite-ssr/ssr.js`. `node_modules` is removed from the final image, but the `node` binary stays to run that server. At runtime, vite_ruby logs `Skipping vite build. Watched files have not changed since the last build`.
 - **Development and test gems are not installed** (`BUNDLE_WITHOUT=development:test`). `web-console`, `rspec`, `rubocop`, `brakeman`, and `dotenv` are therefore **not** in the container. Run tests and linters on your host (or in CI), not in this image. `faker` is a top-level gem, so seeds do work.
 - **Secrets are never baked in.** `.env*`, `config/master.key`, `spec/`, `.git/`, `node_modules/`, and `log/`/`tmp/` contents are all in [.dockerignore](.dockerignore).
 
@@ -165,7 +167,8 @@ docker compose up
         └─ exec ./bin/thrust ./bin/rails server
               ├─ Thruster listens on :80   (container) ← published as localhost:3000
               └─ Puma listens on 127.0.0.1:3000 (inside the container only)
-                   └─ SOLID_QUEUE_IN_PUMA=true → Solid Queue supervisor, dispatcher and worker
+                   ├─ SOLID_QUEUE_IN_PUMA=true → Solid Queue supervisor, dispatcher and worker
+                   └─ inertia_ssr plugin → node public/vite-ssr/ssr.js on :13714 (not published)
 ```
 
 Key points:
@@ -175,6 +178,7 @@ Key points:
 3. **The `3000:80` port mapping is intentional.** Thruster (an HTTP/2 proxy that handles gzip, asset caching, and X-Sendfile) listens on port 80 and forwards to Puma on port 3000 *inside* the container. Browser traffic always goes through Thruster.
 4. **Background jobs start with the server.** Puma's `solid_queue` plugin forks the Solid Queue supervisor, so imports are processed without a separate container ([section 7](#7-background-jobs-solid-queue)).
 5. During the first second or two you may see `Unable to proxy request ... connection refused`. Thruster starts before Puma finishes booting, and the message stops once Puma is listening.
+6. **Pages arrive server-rendered.** Once Puma has booted, its `inertia_ssr` plugin starts the Node SSR server (log line `Inertia SSR: server ready`) and restarts it if it crashes. Rails sends each Inertia page to it and puts the returned HTML in the response, and React hydrates that HTML in the browser. If the SSR server is down, pages still work: they render in the browser instead. `INERTIA_SSR_ENABLED=false` turns SSR off.
 
 ### Databases
 
@@ -207,7 +211,7 @@ Admin uploads spreadsheet ──► ProcessImportJob.perform_later ──► Pos
                                                                                    (inside Puma)
 ```
 
-- **Pages** are Rails controllers rendering Inertia.js responses. React components come from the prebuilt bundle in `public/vite-dev/`, served by Thruster.
+- **Pages** are Rails controllers rendering Inertia.js responses. On a full page load, Rails first posts the page to the Inertia SSR server (`127.0.0.1:13714`, inside the container) and sends back its HTML, so content shows before any JavaScript runs. React components then come from the prebuilt bundle in `public/vite-dev/`, served by Thruster, and hydrate that HTML. Later navigation is client-side, as before.
 - **Real-time updates** (dashboard counters, import progress) use Action Cable at `/cable` on the Solid Cable adapter. Solid Cable stores messages in the `cable` database and polls it.
 - **Background work** (spreadsheet imports on the `imports` queue, debounced dashboard broadcasts on `default`) is enqueued into the `queue` database through Solid Queue and picked up by the worker running inside Puma.
 

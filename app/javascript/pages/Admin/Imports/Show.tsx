@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { Head, Link, router } from '@inertiajs/react'
 import AppLayout from '@/layouts/AppLayout'
+import { useLocaleFormat } from '@/hooks/useLocaleFormat'
 import { getConsumer } from '@/lib/cable'
 import type { Import } from '@/types'
 
@@ -10,6 +11,7 @@ type Props = { import: Import }
 export default function Show({ import: record }: Props) {
   const finished = record.finished
   const pending = useRef<number | null>(null)
+  const format = useLocaleFormat()
 
   useEffect(() => {
     if (finished) return
@@ -73,7 +75,7 @@ export default function Show({ import: record }: Props) {
           />
         </div>
         <p className="mt-2 text-sm tabular-nums text-slate-600">
-          {record.processed_rows.toLocaleString()} of {record.total_rows.toLocaleString()} rows (
+          {format.number(record.processed_rows)} of {format.number(record.total_rows)} rows (
           {record.progress}%)
         </p>
       </div>

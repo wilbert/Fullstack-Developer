@@ -26,7 +26,9 @@ module FullstackDeveloper
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
-    config.autoload_lib(ignore: %w[assets tasks])
+    # ruby_jit.rb and jit_profile are plain Ruby, required explicitly: the JIT choice has to be
+    # made while initializing, and bin/jit-profile runs without booting Rails.
+    config.autoload_lib(ignore: %w[assets tasks ruby_jit.rb jit_profile.rb jit_profile])
 
     # Configuration for the application, engines, and railties goes here.
     #
