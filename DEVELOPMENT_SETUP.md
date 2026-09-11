@@ -92,7 +92,7 @@ The resulting image is named `fullstack-developer-web:latest`. [Dockerfile](Dock
 └───────────────┬──────────────────────┘
                 │
      ┌──────────▼─────────── build ────────────────────────────────┐
-     │ + build-essential, libpq-dev, git, Node 22.14.0             │
+     │ + build-essential, libpq-dev, git, Node 26.8.2              │
      │ 1. bundle install  (Gemfile / Gemfile.lock layer — cached)  │
      │ 2. npm ci          (package-lock.json layer — cached)       │
      │ 3. COPY . .        (application code)                       │
@@ -289,7 +289,7 @@ For fast feedback (Vite HMR, instant Ruby reloads, tests, linters), run the Rail
          - "5432:5432"
    ```
 2. `docker compose up -d db`
-3. On your host (Ruby 4.0.6 and Node 22 installed, after `bundle install && npm install`), export the variables Rails expects. `.env` is not loaded automatically outside Compose:
+3. On your host (Ruby 4.0.6 and Node 26 installed (`nvm use` reads `.nvmrc`), after `bundle install && npm install`), export the variables Rails expects. `.env` is not loaded automatically outside Compose:
    ```bash
    export DB_HOST=localhost POSTGRES_USER=umanni POSTGRES_PASSWORD=secret \
           APP_ORIGIN=http://localhost:3000

@@ -7,7 +7,8 @@
 
 # Must match .ruby-version and the `ruby` line in the Gemfile.
 ARG RUBY_VERSION=4.0.6
-ARG NODE_VERSION=22.14.0
+# Must match .nvmrc (CI reads it through actions/setup-node).
+ARG NODE_VERSION=26.8.2
 
 FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
 
