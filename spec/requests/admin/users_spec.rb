@@ -37,7 +37,7 @@ RSpec.describe "Admin::Users", type: :request do
 
       get admin_users_path
 
-      expect(props[:users].pluck(:full_name)).to match_array([ "Ada Lovelace", "Grace Hopper" ])
+      expect(props[:users].pluck(:full_name)).to contain_exactly("Ada Lovelace", "Grace Hopper")
     end
 
     it "exposes the search state as filters" do

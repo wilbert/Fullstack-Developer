@@ -78,6 +78,6 @@ Rails.application.configure do
 
   config.active_job.queue_adapter = :solid_queue
   config.solid_queue.connects_to = { database: { writing: :queue } }
-  config.action_cable.allowed_request_origins = [ENV.fetch("APP_ORIGIN")]
+  config.action_cable.allowed_request_origins = [ ENV.fetch("APP_ORIGIN") ]
   config.action_cable.mount_path = "/cable"
 end

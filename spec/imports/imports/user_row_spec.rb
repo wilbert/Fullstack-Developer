@@ -40,7 +40,8 @@ RSpec.describe Imports::UserRow, type: :model do
     end
 
     it "drops columns whose header was not recognised" do
-      user_row = described_class.from([ :full_name, nil, :email_address ], [ "Grace Hopper", "Engineering", "grace@example.com" ])
+      user_row = described_class.from([ :full_name, nil, :email_address ],
+[ "Grace Hopper", "Engineering", "grace@example.com" ])
 
       expect(user_row).to have_attributes(full_name: "Grace Hopper", email_address: "grace@example.com")
     end
@@ -50,7 +51,8 @@ RSpec.describe Imports::UserRow, type: :model do
     end
 
     it "falls back to member when the file has no role column" do
-      expect(described_class.from(%i[full_name email_address], [ "Grace Hopper", "grace@example.com" ]).role).to eq("member")
+      expect(described_class.from(%i[full_name email_address],
+[ "Grace Hopper", "grace@example.com" ]).role).to eq("member")
     end
 
     it "tolerates a row shorter than the header" do
@@ -100,7 +102,8 @@ RSpec.describe Imports::UserRow, type: :model do
     it { is_expected.to allow_value("grace.hopper+navy@example.com").for(:email_address) }
     it { is_expected.not_to allow_value("grace@", "not an email").for(:email_address) }
 
-    it { is_expected.to validate_inclusion_of(:role).in_array(%w[member admin]).with_message("must be admin or member") }
+    it {
+ expect(subject).to validate_inclusion_of(:role).in_array(%w[member admin]).with_message("must be admin or member") }
 
     it { is_expected.to allow_value(nil, "", "https://cdn.example.com/grace.png").for(:avatar_url) }
     it { is_expected.not_to allow_value("http://cdn.example.com/grace.png", "javascript:alert(1)").for(:avatar_url) }

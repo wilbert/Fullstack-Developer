@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "The user form", type: :system, js: true do
+RSpec.describe "The user form", :js, type: :system do
   let(:admin)  { create(:user, :admin, full_name: "Ada Lovelace", email_address: "ada@example.com") }
   let(:member) { create(:user, full_name: "Grace Hopper", email_address: "grace@example.com") }
 

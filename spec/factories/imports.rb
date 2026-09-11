@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :import do
     user { association :user, :admin }
 
-    transient { rows { [["Ada Lovelace", "ada@example.test", "admin"]] } }
+    transient { rows { [ [ "Ada Lovelace", "ada@example.test", "admin" ] ] } }
 
     after(:build) do |import, evaluator|
       csv = CSV.generate do |out|

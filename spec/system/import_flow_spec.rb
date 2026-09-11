@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Importing users", type: :system, js: true do
+RSpec.describe "Importing users", :js, type: :system do
   include ActiveJob::TestHelper
 
   let(:admin)  { create(:user, :admin, full_name: "Ada Lovelace", email_address: "ada@example.com") }

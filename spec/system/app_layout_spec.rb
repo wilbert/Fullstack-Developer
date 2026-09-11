@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "The application layout", type: :system, js: true do
+RSpec.describe "The application layout", :js, type: :system do
   let(:member) { create(:user, full_name: "Grace Hopper", email_address: "grace@example.com") }
   let(:admin)  { create(:user, :admin, full_name: "Ada Lovelace", email_address: "ada@example.com") }
 

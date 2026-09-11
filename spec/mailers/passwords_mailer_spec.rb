@@ -21,7 +21,7 @@ RSpec.describe PasswordsMailer, type: :mailer do
     body = mail.body.encoded
 
     expect(body).to include("/passwords/")
-    expect(body).to match(/edit/)
+    expect(body).to include('edit')
   end
 
   it "delivers" do

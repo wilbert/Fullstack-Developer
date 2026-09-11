@@ -18,7 +18,7 @@ RSpec.describe "Passwords", type: :request do
       }.to have_enqueued_mail(PasswordsMailer, :reset)
 
       expect(response).to redirect_to(new_session_url)
-      expect(flash[:notice]).to match(/Password reset instructions sent/)
+      expect(flash[:notice]).to include('Password reset instructions sent')
     end
 
     it "finds the user even when the address needs normalizing" do
@@ -55,7 +55,7 @@ RSpec.describe "Passwords", type: :request do
       get edit_password_url("not-a-real-token")
 
       expect(response).to redirect_to(new_password_url)
-      expect(flash[:alert]).to match(/invalid or has expired/)
+      expect(flash[:alert]).to include('invalid or has expired')
     end
   end
 
@@ -65,7 +65,7 @@ RSpec.describe "Passwords", type: :request do
             params: { password: "new-password", password_confirmation: "new-password" }
 
       expect(response).to redirect_to(new_session_url)
-      expect(flash[:notice]).to match(/Password has been reset/)
+      expect(flash[:notice]).to include('Password has been reset')
       expect(user.reload.authenticate("new-password")).to be_truthy
     end
 
@@ -87,7 +87,7 @@ RSpec.describe "Passwords", type: :request do
       patch password_url(token), params: { password: "new-password", password_confirmation: "different" }
 
       expect(response).to redirect_to(edit_password_url(token))
-      expect(flash[:alert]).to match(/Passwords did not match/)
+      expect(flash[:alert]).to include('Passwords did not match')
       expect(user.reload.authenticate("password")).to be_truthy
     end
 

@@ -95,7 +95,7 @@ RSpec.describe UserSearch do
       finder = search(role: "superuser")
 
       expect(finder.to_props).to include(role: nil)
-      expect(finder.records).to match_array([ admin, member ])
+      expect(finder.records).to contain_exactly(admin, member)
     end
 
     it "ignores a case-mismatched role rather than guessing" do
@@ -127,7 +127,7 @@ RSpec.describe UserSearch do
     end
 
     it "treats a whitespace-only query as no query at all" do
-      expect(search(query: "   ").records).to match_array([ ada, grace ])
+      expect(search(query: "   ").records).to contain_exactly(ada, grace)
     end
 
     it "returns nothing when nothing matches" do

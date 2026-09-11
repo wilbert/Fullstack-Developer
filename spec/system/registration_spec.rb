@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Registering", type: :system, js: true do
+RSpec.describe "Registering", :js, type: :system do
   def fill_in_registration(password_confirmation: "password")
     fill_in "Full name", with: "Ada Lovelace"
     fill_in "Email", with: "ada@example.com"

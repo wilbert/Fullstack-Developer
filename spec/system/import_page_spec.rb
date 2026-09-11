@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "The import page", type: :system, js: true do
+RSpec.describe "The import page", :js, type: :system do
   let(:admin) { create(:user, :admin, full_name: "Ada Lovelace", email_address: "ada@example.com") }
 
   def sign_in_through_the_form(user)

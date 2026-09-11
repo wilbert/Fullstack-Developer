@@ -15,5 +15,5 @@ Capybara.server = :puma, { Silent: true }
 
 RSpec.configure do |config|
   config.before(:each, type: :system) { driven_by :rack_test }
-  config.before(:each, type: :system, js: true) { driven_by :playwright }
+  config.before(:each, :js, type: :system) { driven_by :playwright }
 end

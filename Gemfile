@@ -51,7 +51,6 @@ gem "active_storage_validations"
 gem "faker"
 
 group :development, :test do
-
   # Audits gems for known security defects (use config/bundler-audit.yml to ignore issues)
   gem "bundler-audit", require: false
 
@@ -65,7 +64,7 @@ group :development, :test do
   # Runs the suite across CPU cores: `bundle exec parallel_rspec` [https://github.com/grosser/parallel_tests]
   gem "parallel_tests"
   gem "factory_bot_rails"
-  gem 'dotenv'
+  gem "dotenv"
   gem "rubocop-rspec", require: false
   gem "erb_lint", require: false
 end

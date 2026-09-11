@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "The layout on a phone", type: :system, js: true do
+RSpec.describe "The layout on a phone", :js, type: :system do
   let(:admin) { create(:user, :admin, full_name: "Ada Lovelace", email_address: "ada@example.com") }
 
   # iPhone-sized viewport. The window outlives the example, so put it back.
