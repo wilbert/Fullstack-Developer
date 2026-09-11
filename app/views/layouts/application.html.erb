@@ -22,15 +22,12 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
-    <%= javascript_importmap_tags %>
+    <%# All front-end assets come from Vite: Tailwind (entrypoints/application.css) and the Inertia/React app. %>
     <%= vite_stylesheet_tag "application" %>
     <%= vite_react_refresh_tag %>
     <%= vite_client_tag %>
     <%= vite_typescript_tag "inertia.tsx" %>
     <%= inertia_ssr_head %>
-    <%= vite_typescript_tag 'application' %>
   </head>
 
   <%# No wrapper here: Inertia pages bring AppLayout, and the ERB pages bring their own <main>. %>

@@ -31,7 +31,11 @@ export default function ProfileEdit({ user }: Props) {
         <UserForm user={user} action="/profile" method="patch" submitLabel="Save changes" />
       </div>
 
-      <button type="button" onClick={destroy} className="mt-10 text-sm text-red-600 hover:underline">
+      <button
+        type="button"
+        onClick={destroy}
+        className="mt-10 text-sm text-red-600 hover:underline"
+      >
         Delete my account
       </button>
     </>

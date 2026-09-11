@@ -73,8 +73,8 @@ export default function Show({ import: record }: Props) {
           />
         </div>
         <p className="mt-2 text-sm tabular-nums text-slate-600">
-          {record.processed_rows.toLocaleString()} of {record.total_rows.toLocaleString()} rows
-          {' '}({record.progress}%)
+          {record.processed_rows.toLocaleString()} of {record.total_rows.toLocaleString()} rows (
+          {record.progress}%)
         </p>
       </div>
 
@@ -108,7 +108,9 @@ export default function Show({ import: record }: Props) {
             {record.error_report.map((entry) => (
               <li key={entry.row} className="flex flex-wrap gap-x-4 gap-y-1 px-4 py-2">
                 <span className="w-16 shrink-0 tabular-nums text-slate-400">Row {entry.row}</span>
-                <span className="min-w-0 flex-1 truncate sm:w-64 sm:flex-none">{entry.identifier || '(no email)'}</span>
+                <span className="min-w-0 flex-1 truncate sm:w-64 sm:flex-none">
+                  {entry.identifier || '(no email)'}
+                </span>
                 <span className="w-full text-red-700 sm:w-auto">{entry.errors.join(', ')}</span>
               </li>
             ))}

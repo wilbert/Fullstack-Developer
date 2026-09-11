@@ -54,9 +54,6 @@ COPY . .
 
 RUN bundle exec bootsnap precompile -j 1 app/ lib/
 
-# Build-time placeholders only: production.rb fetches APP_ORIGIN at boot, and
-# assets:precompile boots the app (tailwindcss:build). npm ci already ran above,
-# so vite_ruby must not reinstall.
 RUN SECRET_KEY_BASE_DUMMY=1 \
     APP_ORIGIN=http://localhost \
     VITE_RUBY_SKIP_ASSETS_PRECOMPILE_INSTALL=true \

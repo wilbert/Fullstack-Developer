@@ -47,7 +47,8 @@ export type DashboardStats = {
   generated_at: string
 }
 
-export type ImportStatus = 'pending' | 'parsing' | 'processing' | 'completed' | 'failed' | 'cancelled'
+export type ImportStatus =
+  'pending' | 'parsing' | 'processing' | 'completed' | 'failed' | 'cancelled'
 
 /** One entry of Import#error_report, as written by Import#record_error. */
 export type ImportRowError = {

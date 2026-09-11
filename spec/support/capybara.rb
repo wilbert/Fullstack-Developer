@@ -1,7 +1,8 @@
 require "capybara/playwright"
 
 Capybara.register_driver(:playwright) do |app|
-  Capybara::Playwright::Driver.new(app, browser_type: :chromium, headless: true)
+  browser = ENV.fetch("PLAYWRIGHT_BROWSER", "chromium").to_sym
+  Capybara::Playwright::Driver.new(app, browser_type: browser, headless: true)
 end
 
 # config/routes.rb redirects any GET on host 127.0.0.1 to localhost. Capybara

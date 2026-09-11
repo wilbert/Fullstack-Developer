@@ -32,6 +32,7 @@
 
 # Ignore key files for decrypting credentials and more.
 /config/*.key
+/config/credentials/*.key
 
 
 /app/assets/builds/*
@@ -46,6 +47,10 @@ node_modules
 
 # Ignore SimpleCov coverage reports.
 /coverage/
+
+# Ignore Playwright traces and reports from browser specs.
+/test-results/
+/playwright-report/
 
 # SSH key for the local Kamal test server (.kamal/local).
 /.kamal/local/ssh/

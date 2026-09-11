@@ -29,14 +29,21 @@ export default function Index() {
   const params = useMemo(() => searchParams(filters), [filters])
   const isFirstRender = useRef(true)
 
-  const visit = useCallback((overrides: Partial<SearchParams>) => {
-    router.get('/admin/users', { ...params, page: 1, ...overrides }, {
-      only: [...ONLY],
-      preserveState: true,
-      preserveScroll: true,
-      replace: true,
-    })
-  }, [params])
+  const visit = useCallback(
+    (overrides: Partial<SearchParams>) => {
+      router.get(
+        '/admin/users',
+        { ...params, page: 1, ...overrides },
+        {
+          only: [...ONLY],
+          preserveState: true,
+          preserveScroll: true,
+          replace: true,
+        },
+      )
+    },
+    [params],
+  )
 
   // Debounce the search box so typing doesn't fire a request per keystroke.
   useEffect(() => {
@@ -50,10 +57,13 @@ export default function Index() {
     return () => clearTimeout(timer)
   }, [query, filters.query, visit])
 
-  const sortBy = useCallback((key: SortKey) => {
-    const direction = filters.sort === key && filters.direction === 'asc' ? 'desc' : 'asc'
-    visit({ sort: key, direction })
-  }, [filters.sort, filters.direction, visit])
+  const sortBy = useCallback(
+    (key: SortKey) => {
+      const direction = filters.sort === key && filters.direction === 'asc' ? 'desc' : 'asc'
+      visit({ sort: key, direction })
+    },
+    [filters.sort, filters.direction, visit],
+  )
 
   const toggleRole = useCallback((user: User) => {
     router.patch(`/admin/users/${user.id}/role`, {}, { preserveScroll: true })
@@ -84,7 +94,10 @@ export default function Index() {
           >
             Import users
           </Link>
-          <Link href="/admin/users/new" className="rounded-md bg-slate-900 px-4 py-2 text-sm text-white hover:bg-slate-700">
+          <Link
+            href="/admin/users/new"
+            className="rounded-md bg-slate-900 px-4 py-2 text-sm text-white hover:bg-slate-700"
+          >
             New user
           </Link>
         </div>
@@ -129,8 +142,12 @@ export default function Index() {
                   </button>
                 </th>
               ))}
-              <th scope="col" className="px-4 py-3">Email</th>
-              <th scope="col" className="px-4 py-3 text-right">Actions</th>
+              <th scope="col" className="px-4 py-3">
+                Email
+              </th>
+              <th scope="col" className="px-4 py-3 text-right">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -144,22 +161,37 @@ export default function Index() {
                     </Link>
                   </div>
                 </td>
-                <td className="px-4 py-3"><RoleBadge role={user.role} /></td>
+                <td className="px-4 py-3">
+                  <RoleBadge role={user.role} />
+                </td>
                 <td className="px-4 py-3 text-slate-600">
-                  <time dateTime={user.created_at}>{joinedAt.format(new Date(user.created_at))}</time>
+                  <time dateTime={user.created_at}>
+                    {joinedAt.format(new Date(user.created_at))}
+                  </time>
                 </td>
                 <td className="px-4 py-3 text-slate-600">{user.email_address}</td>
                 <td className="px-4 py-3">
                   <div className="flex justify-end gap-3">
                     {user.id !== auth.user?.id && (
-                      <button type="button" onClick={() => toggleRole(user)} className="text-slate-600 hover:underline">
+                      <button
+                        type="button"
+                        onClick={() => toggleRole(user)}
+                        className="text-slate-600 hover:underline"
+                      >
                         Make {user.admin ? 'member' : 'admin'}
                       </button>
                     )}
-                    <Link href={`/admin/users/${user.id}/edit`} className="text-slate-600 hover:underline">
+                    <Link
+                      href={`/admin/users/${user.id}/edit`}
+                      className="text-slate-600 hover:underline"
+                    >
                       Edit
                     </Link>
-                    <button type="button" onClick={() => destroy(user)} className="text-red-600 hover:underline">
+                    <button
+                      type="button"
+                      onClick={() => destroy(user)}
+                      className="text-red-600 hover:underline"
+                    >
                       Delete
                     </button>
                   </div>
@@ -190,7 +222,9 @@ export default function Index() {
               aria-current={page === filters.page ? 'page' : undefined}
               aria-label={`Page ${page}`}
               className={`rounded px-3 py-1 text-sm ${
-                page === filters.page ? 'bg-slate-900 text-white' : 'border border-slate-300 bg-white'
+                page === filters.page
+                  ? 'bg-slate-900 text-white'
+                  : 'border border-slate-300 bg-white'
               }`}
             >
               {page}

@@ -1,6 +1,15 @@
 import { useForm } from '@inertiajs/react'
 import { FormEvent } from 'react'
 import Field from '@/components/Field'
+import { useLiveValidation } from '@/hooks/useLiveValidation'
+import {
+  avatarImage,
+  avatarUrl,
+  emailAddress,
+  fullName,
+  password,
+  passwordConfirmation,
+} from '@/lib/validation'
 import type { User, UserRole } from '@/types'
 
 type Props = {
@@ -22,10 +31,19 @@ export default function UserForm({ user, roles, action, method, submitLabel }: P
     role: user?.role ?? ('member' as UserRole),
   })
   const { data, setData, errors, processing, progress } = form
+  const validation = useLiveValidation(form, {
+    full_name: fullName,
+    email_address: emailAddress,
+    // Editing keeps the current password when the field is left blank.
+    password: password({ required: !user }),
+    password_confirmation: passwordConfirmation,
+    avatar_url: avatarUrl,
+    avatar_image: avatarImage,
+  })
 
-  const submit = (event: FormEvent) => {
+  const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-
+    if (!validation.validate(event.currentTarget)) return
 
     form.transform(({ avatar_image, ...fields }) => ({
       user: avatar_image ? { ...fields, avatar_image } : fields,
@@ -39,7 +57,8 @@ export default function UserForm({ user, roles, action, method, submitLabel }: P
       <Field label="Full name" error={errors.full_name}>
         <input
           value={data.full_name}
-          onChange={(e) => setData('full_name', e.target.value)}
+          onChange={(e) => validation.update('full_name', e.target.value)}
+          onBlur={() => validation.touch('full_name')}
           required
           minLength={2}
           maxLength={120}
@@ -51,17 +70,24 @@ export default function UserForm({ user, roles, action, method, submitLabel }: P
         <input
           type="email"
           value={data.email_address}
-          onChange={(e) => setData('email_address', e.target.value)}
+          onChange={(e) => validation.update('email_address', e.target.value)}
+          onBlur={() => validation.touch('email_address')}
           required
           className="input"
         />
       </Field>
 
-      <Field label="Password" error={errors.password} hint={user ? 'Leave blank to keep current' : undefined}>
+      <Field
+        label="Password"
+        error={errors.password}
+        hint={user ? 'Leave blank to keep current' : 'At least 8 characters'}
+      >
         <input
           type="password"
           value={data.password}
-          onChange={(e) => setData('password', e.target.value)}
+          onChange={(e) => validation.update('password', e.target.value)}
+          onBlur={() => validation.touch('password')}
+          required={!user}
           autoComplete="new-password"
           className="input"
         />
@@ -71,26 +97,32 @@ export default function UserForm({ user, roles, action, method, submitLabel }: P
         <input
           type="password"
           value={data.password_confirmation}
-          onChange={(e) => setData('password_confirmation', e.target.value)}
+          onChange={(e) => validation.update('password_confirmation', e.target.value)}
+          onBlur={() => validation.touch('password_confirmation')}
           autoComplete="new-password"
           className="input"
         />
       </Field>
 
-      <Field label="Avatar upload" error={errors.avatar_image}>
+      <Field label="Avatar upload" error={errors.avatar_image} hint="PNG, JPEG or WebP, under 5 MB">
         <input
           type="file"
           accept="image/png,image/jpeg,image/webp"
-          onChange={(e) => setData('avatar_image', e.target.files?.[0] ?? null)}
+          onChange={(e) => validation.update('avatar_image', e.target.files?.[0] ?? null, true)}
           className="text-sm"
         />
       </Field>
 
-      <Field label="Avatar URL" error={errors.avatar_url} hint="Used when no file is uploaded">
+      <Field
+        label="Avatar URL"
+        error={errors.avatar_url}
+        hint="An https:// link, used when no file is uploaded"
+      >
         <input
           type="url"
           value={data.avatar_url}
-          onChange={(e) => setData('avatar_url', e.target.value)}
+          onChange={(e) => validation.update('avatar_url', e.target.value)}
+          onBlur={() => validation.touch('avatar_url')}
           className="input"
         />
       </Field>
@@ -102,7 +134,11 @@ export default function UserForm({ user, roles, action, method, submitLabel }: P
             onChange={(e) => setData('role', e.target.value as UserRole)}
             className="input"
           >
-            {roles.map((role) => <option key={role} value={role}>{role}</option>)}
+            {roles.map((role) => (
+              <option key={role} value={role}>
+                {role}
+              </option>
+            ))}
           </select>
         </Field>
       )}

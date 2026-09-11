@@ -33,35 +33,62 @@ export default function Index({ imports }: Props) {
         <table className="w-full text-left text-sm">
           <thead className="border-b border-slate-200 text-xs uppercase text-slate-500">
             <tr>
-              <th scope="col" className="px-4 py-3">File</th>
-              <th scope="col" className="px-4 py-3">Status</th>
-              <th scope="col" className="px-4 py-3">Rows</th>
-              <th scope="col" className="px-4 py-3 text-right">Created</th>
-              <th scope="col" className="px-4 py-3 text-right">Skipped</th>
-              <th scope="col" className="px-4 py-3 text-right">Failed</th>
-              <th scope="col" className="px-4 py-3">Uploaded</th>
+              <th scope="col" className="px-4 py-3">
+                File
+              </th>
+              <th scope="col" className="px-4 py-3">
+                Status
+              </th>
+              <th scope="col" className="px-4 py-3">
+                Rows
+              </th>
+              <th scope="col" className="px-4 py-3 text-right">
+                Created
+              </th>
+              <th scope="col" className="px-4 py-3 text-right">
+                Skipped
+              </th>
+              <th scope="col" className="px-4 py-3 text-right">
+                Failed
+              </th>
+              <th scope="col" className="px-4 py-3">
+                Uploaded
+              </th>
             </tr>
           </thead>
           <tbody>
             {imports.map((record) => (
               <tr key={record.id} className="border-b border-slate-100 last:border-0">
                 <td className="px-4 py-3">
-                  <Link href={`/admin/imports/${record.id}`} className="font-medium hover:underline">
+                  <Link
+                    href={`/admin/imports/${record.id}`}
+                    className="font-medium hover:underline"
+                  >
                     {record.filename}
                   </Link>
                 </td>
-                <td className="px-4 py-3"><ImportStatusBadge status={record.status} /></td>
+                <td className="px-4 py-3">
+                  <ImportStatusBadge status={record.status} />
+                </td>
                 <td className="px-4 py-3 tabular-nums text-slate-600">
                   {record.processed_rows.toLocaleString()} of {record.total_rows.toLocaleString()}
                   <span className="text-slate-400"> ({record.progress}%)</span>
                 </td>
-                <td className="px-4 py-3 text-right tabular-nums">{record.created_count.toLocaleString()}</td>
-                <td className="px-4 py-3 text-right tabular-nums">{record.skipped_count.toLocaleString()}</td>
-                <td className={`px-4 py-3 text-right tabular-nums ${record.failed_count > 0 ? 'text-red-600' : ''}`}>
+                <td className="px-4 py-3 text-right tabular-nums">
+                  {record.created_count.toLocaleString()}
+                </td>
+                <td className="px-4 py-3 text-right tabular-nums">
+                  {record.skipped_count.toLocaleString()}
+                </td>
+                <td
+                  className={`px-4 py-3 text-right tabular-nums ${record.failed_count > 0 ? 'text-red-600' : ''}`}
+                >
                   {record.failed_count.toLocaleString()}
                 </td>
                 <td className="px-4 py-3 text-slate-600">
-                  <time dateTime={record.created_at}>{uploadedAt.format(new Date(record.created_at))}</time>
+                  <time dateTime={record.created_at}>
+                    {uploadedAt.format(new Date(record.created_at))}
+                  </time>
                 </td>
               </tr>
             ))}
